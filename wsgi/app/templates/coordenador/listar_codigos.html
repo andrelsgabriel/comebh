@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<h1>Códigos de cadastro de confraternista</h1>
+
+<p>Os códigos abaixo devem ser passados para os confraternista de sua Juventude Espírita
+	para que eles possam realizar sua inscrição na COMEBH 2013. 
+	Cada código dá direito a uma inscrição apenas, e será automaticamente apagado após o uso.
+	Com o código em mãos, o confraternista poderá realizar seu cadastro neste site, e será automaticamente
+	vinculado à sua Juventude Espírita.
+</p>
+
+{% if codigos|length %}
+	<ul>
+		{% for c in codigos %}
+		<li>{{ c.codigo }}</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>Não há códigos válidos disponíveis.</p>
+{% endif %}
+
+<a href="/coordenador/criar_codigo_cadastro">Criar código</a>
+
+{% endblock %}

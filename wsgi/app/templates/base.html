@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    	<title>COMEBH :: {% block titulo %}{% endblock %}</title>
+
+    	<link rel="stylesheet" type="text/css" href="/static/css/comebh.css">
+    	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui-smoothness.css">
+
+    	<script type="text/javascript" src="/static/js/jquery.js"></script>
+    	<script type="text/javascript" src="/static/js/jquery-ui.js"></script>
+    	<script type="text/javascript" src="/static/js/jquery.ui.datepicker-pt-BR.js"></script>
+    	<script type="text/javascript" src="/static/js/jquery.maskedinput.js"></script>
+        <script type="text/javascript" src="/static/js/comebh.js"></script>
+
+        {% block media %}
+        {% endblock %}
+
+	</head>
+	<body>
+        <div id="lateral">
+            <div id="menu">
+                {% block menu %}
+                {% include 'menu_lateral.html' %}
+                {% endblock %}
+            </div>
+
+            <div id="carrinho_de_compras">
+                {% block carrinho_de_compras %}
+                {% include 'carrinho_de_compras.html' %}
+                {% endblock %}
+            </div>
+        </div>
+
+        <div id="conteudo">
+            {% if messages %}
+                <ul class="messagelist">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% block conteudo %}
+            {% endblock %}
+        </div>
+	</body>
+</html>

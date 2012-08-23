@@ -1,0 +1,39 @@
+{% if user.is_authenticated %}
+
+<h4>Seja bem vindo, {{ user.username }}!</h4>
+
+<ul id="menu">
+	<li><a href="/sair">Sair</a></li>
+
+	{% if user.is_staff or user.is_superuser %}
+		<li><a href="/admin">Acessar Administração</a></li>
+	{% endif %}
+
+	{% if user.coordenador %}
+		<li> {{ user.coordenador.juventude.nome }}
+			<ul>
+				<li><a href="/coordenador/editar_juventude">Editar dados</a></li>
+				<li><a href="/coordenador/listar_confraternistas">Confraternistas</a></li>
+				<li><a href="/coordenador/novo_confraternista">Cadastrar confraternista</a></li>
+			</ul>
+		</li>
+	{% endif %}
+
+	{% if user.confraternista %}
+		<li> Confraternista
+			<ul>
+				<li><a href="/confraternista/editar_dados">Minha ficha de inscrição</a></li>
+				
+				{% if user.confraternista.autorizado and not user.confraternista.pagamento %}
+					<li><a href="/confraternista/realizar_pagamento">Pagar minha inscrição</a></li>
+				{% endif %}
+
+				{% if user.confraternista.precisa_autorizacao_pais %}
+					<li><a href="/confraternista/imprimir_autorizacao_pais">Ficha de autorização dos pais</a></li>
+				{% endif %}
+			</ul>
+		</li>
+	{% endif %}
+</ul>
+
+{% endif %}

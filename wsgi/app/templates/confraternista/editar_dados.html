@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<script type="text/javascript">
+
+    function tratarRadioSimNao(name, elem){
+        if($('[name="' + name + '"][value="1"]').is(':checked'))
+            $('#' + elem).show('slow');
+        else
+            $('#' + elem).hide('slow');
+    }
+
+    function validarAceitacaoRegulamento(){
+        if(!$("#aceitar_regulamento").is(":checked")){
+            alert("É necessário aceitar o regulamento para enviar seus dados de inscrição.");
+            $("#t_aceitar_regulamento").css("color", "red");
+            return false;
+        }
+        else
+            return true;
+    }
+
+    $(document).ready(function(){
+        $('input[name="r_alergia"]').click(function(){tratarRadioSimNao('r_alergia', 'alergia');});
+        $('input[name="r_uso_medicamento"]').click(function(){tratarRadioSimNao('r_uso_medicamento', 'uso_medicamento');});
+        $('input[name="r_dieta_especial"]').click(function(){tratarRadioSimNao('r_dieta_especial', 'dieta_especial');});
+        $('input[name="r_comprar_camisa"]').click(function(){tratarRadioSimNao('r_comprar_camisa', 'd_tamanho_camisa');});
+
+        $('input[name="r_alergia"][value={{ form.alergia.value|yesno:"1,0" }}]').click().click();
+        $('input[name="r_uso_medicamento"][value={{ form.uso_medicamento.value|yesno:"1,0" }}]').click().click();
+        $('input[name="r_dieta_especial"][value={{ form.dieta_especial.value|yesno:"1,0" }}]').click().click();
+        $('input[name="r_comprar_camisa"][value={{ form.tamanho_camisa.value|yesno:"1,0" }}]').click().click();
+        
+        $('input[name*=telefone]').mask("(99) 9999-9999");
+    });
+</script>
+
+<h1>Editar dados de inscrição</h1>
+
+<form method="POST" action="/confraternista/editar_dados" onsubmit="return validarAceitacaoRegulamento();">
+    {% csrf_token %}
+
+    <input type="hidden" name="conf_id" value="{{id}}"/>
+
+    {{ form.non_field_errors }}
+
+    <table>
+        <tr>
+          <td><label for="nome_cracha">Nome no Crachá*:</label></td>
+          <td>{{ form.nome_cracha }}</td>
+          <td>{{ form.nome_cracha.errors }}</td>
+        </tr>
+        <tr>
+          <td>Juventude Espírita:</td>
+          <td>{{ juventude }}</td>
+        </tr>
+        <tr>
+          <td><label for="ano_ingresso_mocidade">Ano de ingresso na Juventude Espírita*:</label></td>
+          <td>{{ form.ano_ingresso_mocidade }} ano(s)</td>
+          <td>{{ form.ano_ingresso_mocidade.errors }}</td>
+        </tr>
+        <tr>
+          <td><label for="data_nascimento">Data de Nascimento*:</label></td>
+          <td>{{ form.data_nascimento }}</td>
+          <script type="text/javascript">
+            $(function(){ $("input[name=data_nascimento]").datepicker(); });
+          </script>
+          <td>{{ form.data_nascimento.errors }}</td>
+        </tr>
+        <tr>
+          <td><label for="sexo">Sexo*:</label></td>
+          <td>{{ form.sexo }}</td>
+          <td>{{ form.sexo.errors }}</td>
+        </tr>
+        <tr>
+          <td><label for="comebhs_anteriores">De quais edições da COMEBH você participou?<br/>(Exemplo: 28,29,30):</label></td>
+          <td>{{ form.comebhs_anteriores }}</td>
+          <td>{{ form.comebhs_anteriores.errors }}</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+        <fieldset>
+          <legend>Endereço</legend>
+          <table>
+            <tr>
+              <td><label for="logradouro">Logradouro*:</label></td>
+              <td>{{ form.logradouro }}</td>
+              <td>{{ form.logradouro.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="bairro">Bairro*:</label></td>
+              <td>{{ form.bairro }}</td>
+              <td>{{ form.bairro.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="cidade">Cidade*:</label></td>
+              <td>{{ form.cidade }}</td>
+              <td>{{ form.cidade.errors }}</td>
+            </tr>
+          </table>
+        </fieldset>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+        <fieldset>
+          <legend>Contato</legend>
+          <table>
+            <tr>
+              <td><label for="telefone">Telefone*:</label></td>
+              <td>{{ form.telefone }}</td>
+              <td>{{ form.telefone.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="contato_urgencia">Nome de um contato (em caso de urgência)*:</label></td>
+              <td>{{ form.contato_urgencia }}</td>
+              <td>{{ form.contato_urgencia.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="parentesco_contato_urgencia">Parentesco do contato informado*:</label></td>
+              <td>{{ form.parentesco_contato_urgencia }}</td>
+              <td>{{ form.parentesco_contato_urgencia.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="telefone_contato_urgencia">Telefone do contato informado*:</label></td>
+              <td>{{ form.telefone_contato_urgencia }}</td>
+              <td>{{ form.telefone_contato_urgencia.errors }}</td>
+            </tr>
+            <tr>
+              <td><label for="telefone2_contato_urgencia">Outro telefone*:</label></td>
+              <td>{{ form.telefone2_contato_urgencia }}</td>
+              <td>{{ form.telefone2_contato_urgencia.errors }}</td>
+            </tr>
+          </table>
+        </fieldset>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+          <fieldset>
+        <legend>Saúde</legend>
+        <table>
+          <tr><td colspan="2">Abaixo, caso a sua resposta seja "Sim", 
+              explique a sua situação no espaço que será habilitado.</td></tr>
+          <tr>
+            <td><label for="uso_medicamento">Você usa algum medicamento?</label></td>
+            <td>
+              <div style="float: left">
+            <input type="radio" name="r_uso_medicamento" value="0"/> Não <br/>
+            <input type="radio" name="r_uso_medicamento" value="1"/> Sim <br/>
+              </div>
+              <textarea style="display: none" id="uso_medicamento" 
+                        name="uso_medicamento" rows="3" cols="40">{{ form.uso_medicamento.value|default:"" }}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <td><label for="dieta_especial">Você faz alguma dieta alimentar especial?</label></td>
+            <td>
+              <div style="float: left">
+            <input type="radio" name="r_dieta_especial" value="0"/> Não <br/>
+            <input type="radio" name="r_dieta_especial" value="1"/> Sim <br/>
+              </div>
+              <textarea style="display: none" id="dieta_especial"
+                        name="dieta_especial" rows="3" cols="40">{{ form.dieta_especial.value|default:"" }}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <td><label for="alergia">É alérgico a algum produto, alimento ou medicamento?</label></td>
+            <td>
+              <div style="float: left">
+            <input type="radio" name="r_alergia" value="0"/> Não <br/>
+            <input type="radio" name="r_alergia" value="1"/> Sim <br/>
+              </div>
+              <textarea style="display: none" id="alergia" 
+                        name="alergia" rows="3" cols="40">{{ form.alergia.value|default:"" }}</textarea>
+            </td>
+          </tr>
+        </table>
+          </fieldset>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="comprar_camisa">Deseja comprar a camisa da COMEBH?</label><br/>Valor: R$10,00</td>
+          <td>
+        <div style="float: left">
+          <input type="radio" name="r_comprar_camisa" value="0" {% if not form.tamanho_camisa.value %}checked{% endif %}/> Não <br/>
+          <input type="radio" name="r_comprar_camisa" value="1" {% if form.tamanho_camisa.value %}checked{% endif %}/> Sim <br/>
+        </div>
+        <div style="display: none" id="d_tamanho_camisa" style="margin-left: 13%">
+          <label for="tamanho_camisa">Tamanho:</label>
+          {{ form.tamanho_camisa }}
+        </div>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="voluntario_manutencao">Quer colaborar, na COMEBH, com a comissão de manutenção, caso seja necessário?</label></td>
+          <td>
+        <div style="float: left">
+          <input type="radio" name="voluntario_manutencao" value="0" {% if not form.voluntario_manutencao.value %}checked{% endif %}/> Não <br/>
+          <input type="radio" name="voluntario_manutencao" value="1" {% if form.voluntario_manutencao.value %}checked{% endif %}/> Sim <br/>
+        </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2">
+        <p id="t_aceitar_regulamento">
+          <input type="checkbox" id="aceitar_regulamento"/>
+          Declaro estar consciente do <a href="#">regulamento da XXXI COMEBH</a> e me comprometo a estar presente na 
+          prévia da COMEBH cuja data, horário e local serão divulgados para os coordenadores das mocidades.
+        </p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+        <p>Valor da inscrição: R$30,00</p>
+        <p>O pagamento da inscrição (e da camisa, caso você deseje) será realizado após a aprovação dos seus dados pelo coordenador de sua mocidade.</p>
+          </td>
+        </tr>
+      </table>
+
+      <input type="submit" value="Salvar"/>
+
+</form>
+
+{% endblock %}

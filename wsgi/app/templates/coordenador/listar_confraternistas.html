@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<h1>Confraternistas - {{ juventude.nome }}</h1>
+
+<script type="text/javascript">
+  function aprovar(nome){
+    return confirm("Tem certeza de que deseja autorizar a inscrição de " + nome + 
+                   "? Confira sua ficha de inscrição antes de realizar esta operação.");
+  }
+</script>
+
+<table class="tabela">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Dados preenchidos?</th>
+      <th>Autorizado?</th>
+      <th>Pagamento</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in confraternistas %}
+  	<tr>
+    	<td>{{ c.usuario.get_full_name }}</td>
+      	<td>{{ c.nome_cracha|yesno:"Sim,Não" }}</td>
+      	<td>{{ c.autorizado|yesno:"Sim,Não" }}</td></td>
+      	<td>{% if c.pagamento %} {{c.pagamento.get_estado_str}} {% else %} Não efetuado {% endif %}</td>
+      	<td>{% if c.nome_cracha and not c.autorizado %}
+      			<a href="/coordenador/autorizar?id={{c.id}}" onclick="return aprovar('{{c.usuario.get_full_name}}');">Autorizar</a>,&nbsp;
+      	  	{% endif %}
+      	  	{% if c.autorizado and not c.pagamento %}
+      	  		<a href="#">Pagar inscrição</a>,&nbsp;
+      	  	{% endif %}
+      	  	{% if not c.autorizado and c.precisa_autorizacao_pais %}
+		   		<a href="/confraternista/imprimir_autorizacao_pais?id={{c.id}}" target="_blank">Imprimir autorização dos pais</a>,&nbsp;
+      	  	{% endif %}
+      		<a href="/confraternista/editar_dados?id={{c.id}}">Ver dados</a>	   
+      	</td>
+  	</tr>
+  	{% endfor %}
+  </tbody>
+  <tfooter>
+    <tr><td colspan="6">{{ confraternistas|length }} confraternista{{ confraternistas|pluralize }}
+    	(de um total de {{ juventude.limite_confraternistas }} permitidos).</td></tr>
+  </tfooter>
+</table>
+
+{% endblock %}
