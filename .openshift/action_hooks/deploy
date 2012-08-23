@@ -3,3 +3,18 @@
 # build hook has been run but before the application has been started back
 # up again.  This script gets executed directly, so it could be python, php,
 # ruby, etc.
+
+source ${OPENSHIFT_APP_DIR}virtenv/bin/activate
+export PYTHON_EGG_CACHE=${OPENSHIFT_APP_DIR}virtenv/lib/python2.6/site-packages
+
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py syncdb --noinput'"
+python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py syncdb --noinput
+
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py migrate'"
+python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py migrate
+
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py collectstatic --noinput'"
+python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py collectstatic --noinput
+
+echo "Checking to see if you need to create an Admin account."
+python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py make_admin
