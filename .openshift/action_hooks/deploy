@@ -8,7 +8,7 @@
 #export PYTHON_EGG_CACHE=${OPENSHIFT_APP_DIR}virtenv/lib/python2.6/site-packages
 
 #echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py syncdb --noinput'"
-python ${OPENSHIFT_REPO_DIR}wsgi/inscricao/manage.py syncdb --noinput
+python ${OPENSHIFT_REPO_DIR}wsgi/app/manage.py syncdb --noinput
 
 #echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py migrate'"
 #python ${OPENSHIFT_REPO_DIR}wsgi/mycms/manage.py migrate
