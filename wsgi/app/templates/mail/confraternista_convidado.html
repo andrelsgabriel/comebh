@@ -1,0 +1,11 @@
+{% extends "mail/base.html" %}
+{% block conteudo %}
+<h3>Olá, {{nome}}!</h3>
+<p>Você foi adicionado como confraternista da COMEBH Noroeste 2013, no site <a href="{{ url }}">{{ url }}</a>. 
+	Pela primeira vez, as inscrições serão feitas via Internet.</p>
+<p>Para preencher seus dados de cadastro, use <a href="{{url}}/cadastro?codigo={{codigo}}">este link</a>. 
+	Após criar seu usuário, você deverá informar seus dados correspondentes à antiga ficha de inscrição (como endereço e telefone).</p>
+<p>Por favor, observe que sua participação somente será confirmada após a realização do pagamento da taxa de inscrição. 
+	O pagamento deverá ser realizado após a aprovação de seus dados, e poderá ser feito tanto por você mesmo ou pelos
+	coordenadores de sua Juventude Espírita.</p>
+{% endblock %}

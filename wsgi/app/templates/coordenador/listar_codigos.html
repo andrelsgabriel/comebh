@@ -1,25 +1,46 @@
 {% extends "base.html" %}
 {% block conteudo %}
 
-<h1>Códigos de cadastro de confraternista</h1>
+<h1>Convites de cadastro de confraternista</h1>
 
-<p>Os códigos abaixo devem ser passados para os confraternista de sua Juventude Espírita
-	para que eles possam realizar sua inscrição na COMEBH 2013. 
-	Cada código dá direito a uma inscrição apenas, e será automaticamente apagado após o uso.
-	Com o código em mãos, o confraternista poderá realizar seu cadastro neste site, e será automaticamente
-	vinculado à sua Juventude Espírita.
-</p>
+<p>Abaixo, estão listados os confraternistas da sua Juventude Espírita convidados para a inscrição na COMEBH 2013 que ainda não realizaram
+	seu cadastro.
+	Caso tenha feito algum convite incorretamente (por exemplo, se tiver digitado um email errado), use o link "Desfazer convite" para
+	poder refazer o convite corretamente. Por favor, note que os confraternistas que já aceitaram o convite não serão exibidos abaixo.</p>
 
 {% if codigos|length %}
-	<ul>
-		{% for c in codigos %}
-		<li>{{ c.codigo }}</li>
-		{% endfor %}
-	</ul>
+	<table class="tabela">
+		<thead>
+			<th>Nome</th>
+			<th>Email</th>
+			<th>&nbsp;</th>
+		</thead>
+		<tbody>
+			{% for c in codigos %}
+			<tr>
+				<td>{{ c.nome }}</td>
+				<td>{{ c.email }}</td>
+				<td><a href="/coordenador/desfazer_convite?codigo={{c.codigo}}">Desfazer convite</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br/>
 {% else %}
-	<p>Não há códigos válidos disponíveis.</p>
+	<p>Não há convites pendentes.</p>
 {% endif %}
 
-<a href="/coordenador/criar_codigo_cadastro">Criar código</a>
+<p>Você ainda pode fazer {{ convites_disponiveis }} convites.</p>
+
+<fieldset>
+	<legend>Convidar um confraternista</legend>
+	<form action="/coordenador/criar_codigo_cadastro" method="POST">
+		{% csrf_token %}
+		<table>
+			{{ form.as_table }}
+		</table>
+		<input type="submit" value="Convidar"/>
+	</form>
+</fieldset>
 
 {% endblock %}

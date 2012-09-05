@@ -4,6 +4,8 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.contrib import admin
 
 class JuventudeEspirita(models.Model):
     nome = models.CharField('nome', max_length=80, unique=True)
@@ -15,7 +17,11 @@ class JuventudeEspirita(models.Model):
     bairro = models.CharField('bairro', max_length=255, blank=True)
     cidade = models.CharField('cidade', max_length=255, blank=True)
 
-    limite_confraternistas = models.PositiveIntegerField('limite de confraternistas')
+    limite_confraternistas = models.PositiveIntegerField('limite de confraternistas (fichas)')
+
+    def clean(self):
+        if self.limite_confraternistas < self.confraternistas.count():
+            raise ValidationError(u"O limite de confraternistas da Juventude Espírita deve ser maior que o número de confraternistas cadastrados.")
 
     def __unicode__(self):
         return self.nome
@@ -24,14 +30,37 @@ class JuventudeEspirita(models.Model):
     def isCoordenador(self, usuario):
         return usuario.coordenador and usuario.coordenador.juventude == self
 
+    inscricoes_disponiveis = property(lambda self: self.limite_confraternistas - self.confraternistas.count())
+    inscricoes_utilizadas = property(lambda self: self.confraternistas.count())
+
+    class Meta:
+        verbose_name = "Juventude Espírita"
+        verbose_name_plural = "Juventudes Espíritas"
+
+    class Admin(admin.ModelAdmin):
+        list_display = ("nome", "nome_casa_espirita", "cidade", "limite_confraternistas", "inscricoes_utilizadas", "inscricoes_disponiveis")
+        search_fields = ("nome", "bairro", "cidade")
+        ordering = ("nome",)
+
 
 
 class Coordenador(models.Model):
     usuario = models.OneToOneField(User, related_name="coordenador")
-    juventude = models.ForeignKey(JuventudeEspirita, related_name="coordenadores")
+    juventude = models.ForeignKey(JuventudeEspirita, related_name="coordenadores", verbose_name=u"Juventude Espírita")
+
+    nome = property(lambda self: self.usuario.get_full_name())
 
     def __unicode__(self):
-        return u"{.first_name} (coordena a juventude {.nome})".format(self.usuario, self.juventude)
+        return self.nome
+
+    class Meta:
+        verbose_name_plural = "Coordenadores"
+
+    class Admin(admin.ModelAdmin):
+        list_display = ("nome", "juventude")
+        list_filter = ("juventude",)
+        search_fields = ("nome", "juventude")
+        #ordering = ("nome",)
 
 
 
@@ -47,18 +76,27 @@ class Pagamento(models.Model):
             (4, u"Pago e liberado para retirada"),
             (5, u"Em disputa"),
             (6, u"Devolvido"),
-            (7, u"Cancelado")
+            (7, u"Cancelado"),
+            (8, u"Isento")
         )
 
     transacao_pagseguro = models.CharField(max_length=255, unique=True, null=True)
     data = models.DateField(auto_now_add=True)
     valor_bruto = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_liquido = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    valor_liquido = models.DecimalField(u"valor líquido (com descontos)", max_digits=10, decimal_places=2, blank=True, null=True)
     estado = models.IntegerField(choices=ESTADOS_PAGAMENTO, default=0)
+
+    def __unicode__(self):
+        return self.get_estado_str()
 
     def get_estado_str(self):
         return Pagamento.ESTADOS_PAGAMENTO[self.estado][1]
 
+    pago = property(lambda self: self.estado == 3 or self.estado == 4)
+
+    class Admin(admin.ModelAdmin):
+        list_display = ("data", "valor_bruto", "valor_liquido", "estado")
+        list_filter = ("estado",)
 
 
 
@@ -70,6 +108,7 @@ class Confraternista(models.Model):
 
     usuario = models.OneToOneField(User)
     
+    identidade = models.CharField(max_length=255, blank=True)
     nome_cracha = models.CharField(max_length=255, blank=True)
     juventude = models.ForeignKey(JuventudeEspirita, related_name="confraternistas")
     data_nascimento = models.DateField(blank=True, null=True)
@@ -82,16 +121,16 @@ class Confraternista(models.Model):
     cidade = models.CharField(max_length=255, null=True, blank=True)
     
     telefone = models.CharField(max_length=20, null=True, blank=True)
-    contato_urgencia = models.CharField(max_length=255, null=True, blank=True)
-    parentesco_contato_urgencia = models.CharField(max_length=255, null=True, blank=True)
-    telefone_contato_urgencia = models.CharField(max_length=255, null=True, blank=True)
-    telefone2_contato_urgencia = models.CharField(max_length=255, null=True, blank=True)
+    contato_urgencia = models.CharField(u"contato (para urgência)", max_length=255, null=True, blank=True)
+    parentesco_contato_urgencia = models.CharField(u"parentesco do contato de urgência", max_length=255, null=True, blank=True)
+    telefone_contato_urgencia = models.CharField(u"telefone do contato de urgência", max_length=255, null=True, blank=True)
+    telefone2_contato_urgencia = models.CharField(u"outro telefone de urgência", max_length=255, null=True, blank=True)
 
-    ano_ingresso_mocidade = models.PositiveIntegerField(null=True, blank=True)
-    comebhs_anteriores = models.CommaSeparatedIntegerField(max_length=255, null=True, blank=True)
+    ano_ingresso_mocidade = models.PositiveIntegerField(u"ano de ingresso na Juventude Espírita", null=True, blank=True)
+    comebhs_anteriores = models.CommaSeparatedIntegerField("COMEBHS anteriores", max_length=255, null=True, blank=True)
 
     dieta_especial = models.TextField(null=True, blank=True)
-    uso_medicamento = models.TextField(null=True, blank=True)
+    uso_medicamento = models.TextField(u"Uso controlado de medicamento", null=True, blank=True)
     alergia = models.TextField(null=True, blank=True)
 
     tamanho_camisa = models.CharField(null=True, blank=True, max_length=1, 
@@ -100,7 +139,7 @@ class Confraternista(models.Model):
     pagamento_inscricao = models.ForeignKey(Pagamento, null=True, blank=True, related_name="confraternistas")
 
     def __unicode__(self):
-        return self.usuario.get_full_name() + " - " + self.juventude.nome
+        return self.usuario.get_full_name() + " (" + self.juventude.nome + ")"
 
 
     def precisa_autorizacao_pais(self):
@@ -109,13 +148,62 @@ class Confraternista(models.Model):
                                                  settings.DATA_COMEBH.month,
                                                  settings.DATA_COMEBH.day)
 
+    def valor_inscricao(self):
+        if self.tamanho_camisa:
+            return settings.VALOR_INSCRICAO + settings.VALOR_CAMISA
+
+        return settings.VALOR_INSCRICAO
+
+    nome = property(lambda self: self.usuario.get_full_name())
+    preco_inscricao = property(lambda self: "R${:.2f}".format(self.valor_inscricao()))
+
+    class Admin(admin.ModelAdmin):
+
+        class FiltroPorIdade(admin.SimpleListFilter):
+            title = "Por idade"
+            parameter_name = "idade"
+
+            def lookups(*args):
+                return (("M", "Maiores de idade"), 
+                        ("m", "Menores de idade"))
+
+            def queryset(self, request, queryset):
+
+                data_minima = datetime.date(settings.DATA_COMEBH.year - 18,
+                                            settings.DATA_COMEBH.month,
+                                            settings.DATA_COMEBH.day)
+
+                if self.value() == "m":
+                    return queryset.filter(data_nascimento__gt=data_minima)
+                elif self.value() == "M":
+                    return queryset.filter(data_nascimento__lte=data_minima)
+
+        class FiltroPorEstadoPagamento(admin.SimpleListFilter):
+            title = "estado de pagamento"
+            parameter_name = "estado_pagamento"
+
+            def lookups(*args):
+                return Pagamento.ESTADOS_PAGAMENTO
+
+            def queryset(self, request, queryset):
+                if self.value():
+                    return queryset.filter(pagamento_inscricao__in=Pagamento.objects.filter(estado=self.value()))
+                
+
+        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", "preco_inscricao")
+        list_filter = ("juventude", "autorizado", "voluntario_manutencao", FiltroPorIdade, FiltroPorEstadoPagamento)
+        search_fields = ("juventude", "data_nascimento")
+        ordering = ("juventude",)
+
 
 
 class CodigoCadastro(models.Model):
     codigo = models.IntegerField(unique=True)
     juventude = models.ForeignKey(JuventudeEspirita, related_name="codigos_cadastro")
     coordenador = models.BooleanField()
-
+    confraternista = models.BooleanField(default=True)
+    nome = models.CharField(max_length=255)
+    email = models.EmailField()
 
     def save(self, *args, **kwargs):
         if self.codigo is None:

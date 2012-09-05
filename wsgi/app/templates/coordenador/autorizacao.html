@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<style type="text/css" media="screen">
+  #autorizacao { visibility: hidden; }
+</style>
+
+<style type="text/css" media="print">
+  h2 { text-align: center; }
+  table { margin-left: 15%; }
+  body * { visibility: hidden; }
+  #autorizacao, #autorizacao * { visibility: visible; }
+  #autorizacao { position: absolute; top: 0px; left: 0px; }
+  td { text-align: center; }
+  p { text-align: justify; }
+</style>
+
+<div id="texto">
+  <p>
+    Clique no botão abaixo para imprimir uma ficha de autorização, que deverá ser assinada
+    pelo responsável pela Juventude Espírita {{ juventude }}. 
+  </p>
+  
+  <input type="button" value="Imprimir ficha" onclick="window.print();"/>
+</div>
+
+<div id="autorizacao">
+  <h2>Autorização da Juventude Espírita</h2>
+  <p>
+    Eu, ________________________________________, responsável pela Juventude Espírita {{ juventude.nome }}, portador da identidade de número __________,
+    autorizo a participação dos jovens listados abaixo na XXXI Confraternização das Mocidades Espíritas de Belo Horizonte - Regional Noroeste, a se realizar no período do carnaval. Este encontro de jovens tem
+    duração de cinco dias, do dia 9/2/2013 a 13/2/2013, e será regime de internato. <br/><br/>
+
+    <table class="tabela">
+      <thead>
+        <th>Nome</th>
+        <th>Identidade (RG)</th>
+      </thead>
+      <tbody>
+        {% for c in confraternistas %}
+        <tr>
+          <td>{{ c.usuario.get_full_name }}</td>
+          <td>{{ c.identidade }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <br/><br/>
+
+    Belo Horizonte, ___/___/2012<br/><br/>
+
+    <table>
+      <tr>
+	<td>______________________________</td>
+      </tr>
+      <tr>
+	<td>Responsável pela Juventude Espírita {{ juventude.nome }}</td>
+      </tr>
+    </table>
+  </p>
+</div>
+
+
+{% endblock %}

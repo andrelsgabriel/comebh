@@ -1,5 +1,11 @@
 {% if user.is_authenticated %}
 
+<script type="text/javascript">
+	function avisoPagamentoConfraternista(){
+		return confirm("Você será redirecionado para o site do PagSeguro, aonde poderá realizar o pagamento da sua inscrição. Continuar?");
+	}
+</script>
+
 <h4>Seja bem vindo, {{ user.username }}!</h4>
 
 <ul id="menu">
@@ -7,6 +13,7 @@
 
 	{% if user.is_staff or user.is_superuser %}
 		<li><a href="/admin">Acessar Administração</a></li>
+		<li><a href="/administrador/convites_coordenador">Convidar coordenadores</a></li>
 	{% endif %}
 
 	{% if user.coordenador %}
@@ -14,7 +21,8 @@
 			<ul>
 				<li><a href="/coordenador/editar_juventude">Editar dados</a></li>
 				<li><a href="/coordenador/listar_confraternistas">Confraternistas</a></li>
-				<li><a href="/coordenador/novo_confraternista">Cadastrar confraternista</a></li>
+				<li><a href="/coordenador/novo_confraternista">Convidar confraternista</a></li>
+				<li><a href="/coordenador/autorizacao_casa_espirita">Autorização da Casa Espírita</a></li>
 			</ul>
 		</li>
 	{% endif %}
@@ -24,11 +32,11 @@
 			<ul>
 				<li><a href="/confraternista/editar_dados">Minha ficha de inscrição</a></li>
 				
-				{% if user.confraternista.autorizado and not user.confraternista.pagamento %}
-					<li><a href="/confraternista/realizar_pagamento">Pagar minha inscrição</a></li>
+				{% if user.confraternista.autorizado and not user.confraternista.pagamento_inscricao.pago %}
+					<li><a target="_blank" onclick="return avisoPagamentoConfraternista();" href="/confraternista/realizar_pagamento">Pagar minha inscrição</a></li>
 				{% endif %}
 
-				{% if user.confraternista.precisa_autorizacao_pais %}
+				{% if user.confraternista.precisa_autorizacao_pais and not user.confraternista.autorizado %}
 					<li><a href="/confraternista/imprimir_autorizacao_pais">Ficha de autorização dos pais</a></li>
 				{% endif %}
 			</ul>

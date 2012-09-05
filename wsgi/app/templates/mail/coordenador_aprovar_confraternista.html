@@ -1,0 +1,7 @@
+{% extends "mail/base.html" %}
+{% block conteudo %}
+<h3>Olá,</h3>
+<p>O confraternista {{nome}} preencheu seus dados de inscrição da COMEBH 2013. Agora, ele necessita de sua aprovação para que o pagamento
+	de sua inscrição seja realizado.</p>
+<p>Para ver os confraternistas aguardando aprovação, use <a href="{{url}}/coordenador/listar_confraternistas">este link</a>.</p>
+{% endblock %}

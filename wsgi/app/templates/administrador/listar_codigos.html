@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<h1>Convites de cadastro de coordenadores</h1>
+
+<p>Abaixo, estão listados os coordenadores convidados para a inscrição na COMEBH 2013 que ainda não realizaram seu cadastro.</p>
+
+{% if codigos|length %}
+	<table class="tabela">
+		<thead>
+			<th>Nome</th>
+			<th>Email</th>
+			<th>&nbsp;</th>
+		</thead>
+		<tbody>
+			{% for c in codigos %}
+			<tr>
+				<td>{{ c.nome }}</td>
+				<td>{{ c.email }}</td>
+				<td><a href="/administrador/desfazer_convite_coordenador?codigo={{c.codigo}}">Desfazer convite</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br/>
+{% else %}
+	<p>Não há convites pendentes.</p>
+{% endif %}
+
+<fieldset>
+	<legend>Convidar um coordenador</legend>
+	<form action="/administrador/convidar_coordenador" method="POST">
+		{% csrf_token %}
+		<table>
+			{{ form.as_table }}
+		</table>
+		<input type="submit" value="Convidar"/>
+	</form>
+</fieldset>
+
+{% endblock %}

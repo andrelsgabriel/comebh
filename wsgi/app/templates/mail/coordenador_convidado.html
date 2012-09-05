@@ -1,0 +1,9 @@
+{% extends "mail/base.html" %}
+{% block conteudo %}
+<h3>Olá, {{nome}}!</h3>
+<p>Você foi adicionado como coordenador da Juventude Espírita {{juventude}} no processo de inscrição da COMEBH Noroeste 2013, feito no site <a href="{{ url }}">{{ url }}</a>. 
+	Pela primeira vez, as inscrições serão feitas via Internet.</p>
+<p>Para preencher seus dados de cadastro, use <a href="{{url}}/cadastro?codigo={{codigo}}">este link</a>. 
+	Após criar seu usuário, você terá acesso aos recursos de coordenação, como convidar confraternistas, gerenciar seus dados e efetuar
+	pagamento de inscrições.</p>
+{% endblock %}

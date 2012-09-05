@@ -19,14 +19,30 @@ class EditarJuventude(forms.ModelForm):
         model = models.JuventudeEspirita
         exclude = ('limite_confraternistas',)
 
+
+
+class ConviteConfraternista(forms.Form):
+    nome = forms.CharField()
+    email = forms.EmailField()
+
+
+
+class ConviteCoordenador(forms.Form):
+    nome = forms.CharField()
+    email = forms.EmailField()
+    juventude = forms.ModelChoiceField(queryset=models.JuventudeEspirita.objects.all(), empty_label=None)
+    is_confraternista = forms.BooleanField(label=u"Participará como confraternista", required=False)
+
+
+
 class NovoUsuario(forms.Form):
     login = forms.CharField()
     senha = forms.CharField(widget=forms.PasswordInput())
     senha_confirmacao = forms.CharField(label=u"Confirmação da Senha", widget=forms.PasswordInput())
-    codigo = forms.IntegerField(label=u"Código de cadastro")
+    codigo = forms.IntegerField(widget=forms.HiddenInput())
 
     nome = forms.CharField(label="Nome completo")
-    email = forms.EmailField()
+    email = forms.EmailField(label="Email")
 
     def clean(self):
         if 'login' in self.cleaned_data and \
@@ -70,11 +86,12 @@ class InscricaoConfraternista(forms.ModelForm):
     uso_medicamento = forms.CharField(required=False, widget=forms.Textarea())
     alergia = forms.CharField(required=False, widget=forms.Textarea())
 
-    voluntario_manutencao = forms.BooleanField()
+    voluntario_manutencao = forms.BooleanField(required=False)
     tamanho_camisa = forms.ChoiceField(required=False, choices=[("", "---")] + list(models.Confraternista.TAMANHOS_CAMISA))
 
     class Meta:
         model = models.Confraternista
         exclude = ("usuario", "juventude", "autorizado", "pagamento_inscricao")
+
 
 	

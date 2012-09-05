@@ -3,12 +3,12 @@
 import os
 import os.path
 import datetime
+from decimal import Decimal
 
 if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
 
-
     ADMINS = (
          ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
     )
@@ -17,20 +17,34 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'comebh2',                      # Or path to database file if using sqlite3.
-            'USER': 'comebh',                      # Not used with sqlite3.
-            'PASSWORD': 'comebh',                  # Not used with sqlite3.
-            'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'comebh2',
+            'USER': 'comebh',
+            'PASSWORD': 'comebh',
+            'HOST': '',
+            'PORT': '',
         }
     }
 
-elif os.environ.get('APPLICATION_ENVIRONMENT') in ('production'):
+    EMAIL_HOST = "localhost"
+    EMAIL_PORT = 1000
+    EMAIL_HOST_USER = "comebh+dajnoroeste.juventudeespirita.com.br"
+    EMAIL_HOST_PASSWORD = ""
+    DEFAULT_FROM_EMAIL = "comebh@teste.com.br"
+
+    SITE_URL = "http://localhost:8000"
+
+    PAGSEGURO_EMAIL_CONTA = "gabriel.poesia@gmail.com"
+    PAGSEGURO_TOKEN = "7D8E77121250467A9705056AD5ED0DEA"
+
+    VALOR_INSCRICAO = Decimal("1.00")
+    VALOR_CAMISA = Decimal("0.50")
+
+
+elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
 
-
     ADMINS = (
          ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
     )
@@ -39,14 +53,25 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') in ('production'):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'inscricao',                      # Or path to database file if using sqlite3.
-            'USER': 'admin',                      # Not used with sqlite3.
-            'PASSWORD': 'rdBGsSYL2B-k',                  # Not used with sqlite3.
-            'HOST': '127.4.10.129',                      # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'inscricao',
+            'USER': 'admin',
+            'PASSWORD': 'rdBGsSYL2B-k',
+            'HOST': '127.4.10.129',
+            'PORT': '3306',
         }
     }
+
+    EMAIL_HOST = "mail.juventudeespirita.com.br"
+    EMAIL_PORT = 26
+    EMAIL_HOST_USER = "comebh+dajnoroeste.juventudeespirita.com.br"
+    EMAIL_HOST_PASSWORD = "L?D3UL)0%3R1"
+    DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
+
+    SITE_URL = "http://inscricao-comebh.rhcloud.com"
+
+    VALOR_INSCRICAO = Decimal("40.00")
+    VALOR_CAMISA = Decimal("10.00")
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -81,22 +106,21 @@ MEDIA_ROOT = ''
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = ''
 
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_ROOT = "/home/gpoesia/Dropbox/workspace/COMEBH/inscricao_django/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), os.path.pardir, "static"),
+    # Don't forget to use absolute paths, not relative paths.    
 )
 
 # List of finder classes that know how to find static files in
@@ -133,7 +157,13 @@ ROOT_URLCONF = 'comebh.urls'
 WSGI_APPLICATION = 'comebh.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__), os.path.pardir, 'templates')
+    os.path.join(os.path.dirname(__file__), os.path.pardir, 'templates'),
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages'
 )
 
 INSTALLED_APPS = (
@@ -175,6 +205,8 @@ LOGGING = {
         },
     }
 }
+
+DEFAULT_CHARSET = "UTF-8"
 
 LOGIN_URL = "/login"
 

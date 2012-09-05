@@ -1,0 +1,15 @@
+{% extends "mail/base.html" %}
+{% block conteudo %}
+<h3>Olá, {{confraternista.user.first_name}}!</h3>
+<p>Seus dados de inscrição na COMEBH 2013 foram salvos com sucesso. Eles agora serão enviados para a aprovação dos coordenadores
+	de sua Juventude Espírita.</p>
+<p>Após a aprovação de seus dados, você receberá um novo email com informações sobre o pagamento da inscrição.</p>
+
+{% if confraternista.precisa_autorizacao_pais %}
+<p>Note que, como na data do evento você ainda não será considerado maior de idade pela lei, será necessário entregar
+	uma autorização por escrito assinada por seus pais ou responsáveis aos coordenadores de sua Juventude Espírita
+	para que sua inscrição seja aprovada. Você pode imprimir o modelo desta autorização no site da inscrição da COMEBH,
+	no item "Ficha de autorização dos pais" do menu lateral.</p>
+{% endif %}
+
+{% endblock %}

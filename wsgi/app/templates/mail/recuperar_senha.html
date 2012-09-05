@@ -1,0 +1,9 @@
+{% extends "mail/base.html" %}
+{% block conteudo %}
+	<p>Olá, {{ usuario.get_full_name }}!</p>
+	<p>Você solicitou uma nova senha no site de inscrição da COMEBH Noroeste. Seus novos dados de acesso são: </p>
+	<h4>Usuário: {{ usuario.username }}</h4>
+	<h4>Senha: {{ senha }}</h4>
+	<p>Agora, você pode fazer login novamente e trocar sua senha.</p>
+	<p>Se você não é {{ usuario.get_full_name }}, por favor, desconsidere este e-mail.
+{% endblock %}

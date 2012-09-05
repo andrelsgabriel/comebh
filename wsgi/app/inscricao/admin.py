@@ -1,9 +1,15 @@
+import datetime
 from django.contrib import admin
+from django.conf import settings
 from models import *
 
+
+    		
 for m in [JuventudeEspirita,
-		  Coordenador,
-		  Confraternista,
-		  Pagamento,
-		  CodigoCadastro]:
-	admin.site.register(m)
+          Coordenador,
+          Confraternista,
+          Pagamento]:
+    if hasattr(m, 'Admin'):
+        admin.site.register(m, m.Admin)
+    else:
+        admin.site.register(m)

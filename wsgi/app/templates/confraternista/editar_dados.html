@@ -40,15 +40,20 @@
 <form method="POST" action="/confraternista/editar_dados" onsubmit="return validarAceitacaoRegulamento();">
     {% csrf_token %}
 
-    <input type="hidden" name="conf_id" value="{{id}}"/>
+    <input type="hidden" name="id" value="{{id}}"/>
 
     {{ form.non_field_errors }}
 
     <table>
         <tr>
-          <td><label for="nome_cracha">Nome no Crachá*:</label></td>
+          <td style="width: 40%"><label for="nome_cracha">Nome no Crachá*:</label></td>
           <td>{{ form.nome_cracha }}</td>
           <td>{{ form.nome_cracha.errors }}</td>
+        </tr>
+        <tr>
+          <td><label for="identidade">Identidade (RG)*:</label></td>
+          <td>{{ form.identidade }}</td>
+          <td>{{ form.identidade.errors }}</td>
         </tr>
         <tr>
           <td>Juventude Espírita:</td>
@@ -56,7 +61,7 @@
         </tr>
         <tr>
           <td><label for="ano_ingresso_mocidade">Ano de ingresso na Juventude Espírita*:</label></td>
-          <td>{{ form.ano_ingresso_mocidade }} ano(s)</td>
+          <td>{{ form.ano_ingresso_mocidade }}</td>
           <td>{{ form.ano_ingresso_mocidade.errors }}</td>
         </tr>
         <tr>
@@ -219,8 +224,20 @@
         </tr>
       </table>
 
-      <input type="submit" value="Salvar"/>
+      {% if mostrar_link_autorizacao %}
 
+      <script type="text/javascript">
+          function aprovar(){
+              if(confirm("Tem certeza de que deseja aprovar a inscrição de {{ nome }}?" + 
+                   "Confira sua ficha de inscrição antes de realizar esta operação."))
+                location.href = "/coordenador/autorizar?id={{id}}";
+          }
+      </script>
+
+      <input type="button" onclick="aprovar();" value="Aprovar inscrição do Confraternista"/>
+      {% endif %}
+
+      <input type="submit" value="Salvar"/>
 </form>
 
 {% endblock %}
