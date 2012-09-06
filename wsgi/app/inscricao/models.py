@@ -155,7 +155,7 @@ class Confraternista(models.Model):
         return settings.VALOR_INSCRICAO
 
     nome = property(lambda self: self.usuario.get_full_name())
-    preco_inscricao = property(lambda self: "R${:.2f}".format(self.valor_inscricao()))
+    preco_inscricao = property(lambda self: "R${0:.2f}".format(self.valor_inscricao()))
 
     class Admin(admin.ModelAdmin):
 

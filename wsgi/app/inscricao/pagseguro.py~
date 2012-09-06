@@ -54,7 +54,7 @@ def gerar_pagamento(confraternistas, usuario):
 		siid = str(iid)
 		dadosPagamento["itemId" + siid] = INSCRICAO_COM_CAMISA["id"]
 		dadosPagamento["itemDescription" + siid] = INSCRICAO_COM_CAMISA["descricao"]
-		dadosPagamento["itemAmount" + siid] = "{0:.2f}".format(INSCRICAO_COM_CAMISA["valor"])
+		dadosPagamento["itemAmount" + siid] = "{:.2f}".format(INSCRICAO_COM_CAMISA["valor"])
 		dadosPagamento["itemQuantity" + siid] = n_inscricoes_camisa
 		iid += 1
 
@@ -62,7 +62,7 @@ def gerar_pagamento(confraternistas, usuario):
 		siid = str(iid)
 		dadosPagamento["itemId" + siid] = INSCRICAO_SEM_CAMISA["id"]
 		dadosPagamento["itemDescription" + siid] = INSCRICAO_SEM_CAMISA["descricao"]
-		dadosPagamento["itemAmount" + siid] = "{0:.2f}".format(INSCRICAO_SEM_CAMISA["valor"])
+		dadosPagamento["itemAmount" + siid] = "{:.2f}".format(INSCRICAO_SEM_CAMISA["valor"])
 		dadosPagamento["itemQuantity" + siid] = n_inscricoes_sem_camisa
 		iid += 1
 
