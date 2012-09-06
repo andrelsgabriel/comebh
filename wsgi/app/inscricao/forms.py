@@ -94,4 +94,12 @@ class InscricaoConfraternista(forms.ModelForm):
         exclude = ("usuario", "juventude", "autorizado", "pagamento_inscricao")
 
 
+
+class DadosUsuario(forms.Form):
+    nome = forms.CharField(label="Nome completo")
+    email = forms.EmailField(label="Email")
+
+    senha = forms.CharField(label=u"Nova senha", widget=forms.PasswordInput())
+    senha_confirmacao = forms.CharField(label=u"Confirmação da Senha", widget=forms.PasswordInput())
+    
 	

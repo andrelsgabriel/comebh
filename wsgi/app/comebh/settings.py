@@ -5,15 +5,15 @@ import os.path
 import datetime
 from decimal import Decimal
 
+ADMINS = (
+    ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
+)
+
+
+MANAGERS = ADMINS
+
 if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     DEBUG = True
-    TEMPLATE_DEBUG = DEBUG
-
-    ADMINS = (
-         ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
-    )
-
-    MANAGERS = ADMINS
 
     DATABASES = {
         'default': {
@@ -32,29 +32,29 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     EMAIL_HOST_PASSWORD = ""
     DEFAULT_FROM_EMAIL = "comebh@teste.com.br"
 
+    EMAIL_HOST = "smtp.live.com"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "gabrielpoesia5@hotmail.com"
+    EMAIL_HOST_PASSWORD = "rubyonrails"
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
+
+
     SITE_URL = "http://localhost:8000"
 
     PAGSEGURO_EMAIL_CONTA = "gabriel.poesia@gmail.com"
     PAGSEGURO_TOKEN = "7D8E77121250467A9705056AD5ED0DEA"
-
     VALOR_INSCRICAO = Decimal("1.00")
     VALOR_CAMISA = Decimal("0.50")
 
 
 elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
-    DEBUG = False
-    TEMPLATE_DEBUG = DEBUG
-
-    ADMINS = (
-         ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
-    )
-
-    MANAGERS = ADMINS
+    DEBUG = True
 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'inscricao',
+           'NAME': 'inscricao',
             'USER': 'admin',
             'PASSWORD': 'rdBGsSYL2B-k',
             'HOST': '127.4.10.129',
@@ -62,10 +62,11 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
         }
     }
 
-    EMAIL_HOST = "mail.juventudeespirita.com.br"
-    EMAIL_PORT = 26
-    EMAIL_HOST_USER = "comebh+dajnoroeste.juventudeespirita.com.br"
-    EMAIL_HOST_PASSWORD = "L?D3UL)0%3R1"
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "comebh.noroeste@gmail.com"
+    EMAIL_HOST_PASSWORD = "r00t_COMEBH"
+    EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
 
     SITE_URL = "http://inscricao-comebh.rhcloud.com"
@@ -73,6 +74,11 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
     VALOR_INSCRICAO = Decimal("40.00")
     VALOR_CAMISA = Decimal("10.00")
 
+    PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
+    PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
+
+
+TEMPLATE_DEBUG = DEBUG
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

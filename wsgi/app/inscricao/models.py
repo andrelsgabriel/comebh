@@ -220,3 +220,23 @@ class CodigoCadastro(models.Model):
 
     def __unicode__(self):
         return unicode(self.codigo)
+
+
+
+class ConfiguracaoCOMEBH(models.Model):
+
+    valor_inscricao = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_camisa = models.DecimalField(max_digits=10, decimal_places=2)
+
+    data_evento = models.DateField()
+    limite_inscricoes = models.IntegerField()
+
+    class Meta:
+        verbose_name = u"Configuração da COMEBH"
+        verbose_name_plural = "Configurações Gerais da COMEBH"
+
+    class Admin(admin.ModelAdmin):
+        list_display = ("data", "valor_inscricao", "valor_camisa", "limite_inscricoes")
+
+    def configuracoes_vigentes():
+        return ConfiguracaoCOMEBH.objects.order_by("-data_evento")[0]
