@@ -39,8 +39,6 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
 
-
-
     SITE_URL = "http://localhost:8000"
 
     PAGSEGURO_EMAIL_CONTA = "gabriel.poesia@gmail.com"
@@ -73,7 +71,7 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
 
     SITE_URL = "http://inscricao-comebh.rhcloud.com"
 
-    VALOR_INSCRICAO = Decimal("40.00")
+    VALOR_INSCRICAO = Decimal("30.00")
     VALOR_CAMISA = Decimal("10.00")
 
     PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
