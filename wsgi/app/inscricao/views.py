@@ -169,22 +169,26 @@ def convidar_coordenador(request):
       nome = form.cleaned_data["nome"]
       is_confraternista = form.cleaned_data["is_confraternista"]
 
-      codigo = models.CodigoCadastro(juventude=juventude, coordenador=True, confraternista=is_confraternista, email=email, nome=nome)
-      codigo.save()
-
-      try:
-          enviar_email(email, 
-                       u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013", 
-                       "mail/coordenador_convidado.html",
-                       {'nome' : nome, 'juventude': juventude.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
-      except Exception as e:
-          print e
-          codigo.delete()
-          messages.add_message(request, messages.ERROR, "Erro ao enviar email. Verifique o email digitado e tente novamente.")
-
+      if is_confraternista and juventude.limite_confraternistas <= juventude.confraternistas.count() + juventude.codigos_cadastro.count():
+          messages.error(request, "O limite de confraternistas da juventude escolhida já foi atingido. "
+                         "Por favor, aumente este limite antes de convidar o coordenador como confraternista.")
       else:
-          messages.add_message(request, messages.INFO, "Coordenador convidado com sucesso!")        
-          messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
+          codigo = models.CodigoCadastro(juventude=juventude, coordenador=True, confraternista=is_confraternista, email=email, nome=nome)
+          codigo.save()
+
+          try:
+              enviar_email(email, 
+                           u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013", 
+                           "mail/coordenador_convidado.html",
+                           {'nome' : nome, 'juventude': juventude.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
+          except Exception as e:
+              print e
+              codigo.delete()
+              messages.add_message(request, messages.ERROR, "Erro ao enviar email. Verifique o email digitado e tente novamente.")
+
+          else:
+              messages.add_message(request, messages.INFO, "Coordenador convidado com sucesso!")        
+              messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
       
     return HttpResponseRedirect("/administrador/convites_coordenador")
 
