@@ -69,6 +69,8 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
     EMAIL_HOST_PASSWORD = "r00t_C0MEBH"
     EMAIL_USE_TLS = True
 
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
     SITE_URL = "http://inscricao-comebh.rhcloud.com"
 
     VALOR_INSCRICAO = Decimal("40.00")
