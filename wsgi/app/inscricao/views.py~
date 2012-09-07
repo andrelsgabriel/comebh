@@ -50,7 +50,7 @@ def recuperar_senha(request):
             enviar_email(u.email, u"Recuperação de senha", "mail/recuperar_senha.html",
                         {"usuario": u, "senha": senha})            
         else:
-            messages.error(request, u"Nenhum usuário com o email {} informado foi encontrado.".format(email))
+            messages.error(request, u"Nenhum usuário com o email {0} informado foi encontrado.".format(email))
             email = None
 
     return render_to_response("recuperar_senha.html", 
@@ -126,7 +126,7 @@ def criar_codigo_cadastro(request):
 
         else:
             messages.add_message(request, messages.INFO, "Confraternista convidado com sucesso!")        
-            messages.add_message(request, messages.INFO, u"Foi enviado um email a {} com informações sobre o cadastro.".format(email))
+            messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
     else:
         messages.add_message(request, messages.ERROR, u"É necessário informar nome e email para convidar um confraternista.")
 
@@ -184,7 +184,7 @@ def convidar_coordenador(request):
 
       else:
           messages.add_message(request, messages.INFO, "Coordenador convidado com sucesso!")        
-          messages.add_message(request, messages.INFO, u"Foi enviado um email a {} com informações sobre o cadastro.".format(email))
+          messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
       
     return HttpResponseRedirect("/administrador/convites_coordenador")
 
@@ -376,7 +376,7 @@ def editar_dados(request):
                          {'confraternista': request.user.confraternista})
 
             enviar_email([c.usuario.email for c in request.user.confraternista.juventude.coordenadores.all()],
-                         u"{} preencheu seus dados de inscrição".format(request.user.confraternista.usuario.first_name),
+                         u"{0} preencheu seus dados de inscrição".format(request.user.confraternista.usuario.first_name),
                          "mail/coordenador_aprovar_confraternista.html",
                          {'nome': request.user.get_full_name(), 'url': settings.SITE_URL})
 

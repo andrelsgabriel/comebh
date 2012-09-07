@@ -329,7 +329,7 @@ def editar_dados(request):
 
     mostrar_link_autorizacao = False
 
-    if is_coordenador and conf_id is not None:
+    if is_coordenador and conf_id is not None and conf_id.isdigit():
         confraternista = models.Confraternista.objects.get(id=int(conf_id))
 
         if confraternista.juventude != request.user.coordenador.juventude:
@@ -341,7 +341,7 @@ def editar_dados(request):
     else:
         confraternista = request.user.confraternista
 
-        if confraternista.autorizado and request.method == 'POST':
+        if confraternista.autorizado and request.method == 'POST' and not is_coordenador:
           messages.add_message(request, messages.ERROR, u"Seus dados já foram aprovados. Para alterá-los, contate a coordenação de sua Juventude Espírita.")
           return HttpResponseRedirect("/confraternista/editar_dados")
 
