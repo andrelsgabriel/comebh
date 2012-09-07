@@ -27,7 +27,7 @@
 </div>
 
 <div id="autorizacao">
-  <h2>Autorização do Responsável (para menores de idade)</h2>
+  <h2>Autorização da Casa Espírita</h2>
   <p>
     Eu, ________________________________________, portador da identidade de número __________,
     autorizo {{ confraternista.nome }}, portador da identidade de número {{ confraternista.identidade }},
@@ -39,11 +39,9 @@
     <table>
       <tr>
 	<td>______________________________</td>
-	<td>______________________________</td>
       </tr>
       <tr>
-	<td>{{ confraternista.nome }}</td>
-	<td>Responsável</td>
+	<td>Responsável pela Casa Espírita</td>
       </tr>
     </table>
   </p>
