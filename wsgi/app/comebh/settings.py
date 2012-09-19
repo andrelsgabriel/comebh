@@ -58,7 +58,7 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
         }
     }
 
-    EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br"
+    EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
     EMAIL_TOKEN = "127003923520501950085302456561080789870"
     DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
     EMAIL_FROM_NAME = "COMEBH Noroeste"
