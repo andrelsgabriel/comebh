@@ -30,14 +30,11 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     EMAIL_PORT = 1000
     EMAIL_HOST_USER = "comebh+dajnoroeste.juventudeespirita.com.br"
     EMAIL_HOST_PASSWORD = ""
-    DEFAULT_FROM_EMAIL = "comebh@teste.com.br"
-
-    EMAIL_HOST = "smtp.live.com"
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = "gabrielpoesia5@hotmail.com"
-    EMAIL_HOST_PASSWORD = "rubyonrails"
-    EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
+    EMAIL_FROM_NAME = "COMEBH Noroeste (teste)"
+
+    EMAIL_REMOTE_SENDER = "http://localhost:8080/email/enviar"
+    EMAIL_TOKEN = "127003923520501950085302456561080789870"
 
     SITE_URL = "http://localhost:8000"
 
@@ -61,13 +58,10 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
         }
     }
 
-    EMAIL_HOST = "smtp.live.com"#"plus.smtp.mail.yahoo.com"
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = "comebh_noroeste@live.com.pt" #"comebh.noroeste@gmail.com"
-    EMAIL_HOST_PASSWORD = "r00t_C0MEBH"
-    EMAIL_USE_TLS = True
-
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br"
+    EMAIL_TOKEN = "127003923520501950085302456561080789870"
+    DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
+    EMAIL_FROM_NAME = "COMEBH Noroeste"
 
     SITE_URL = "http://inscricao-comebh.rhcloud.com"
 

@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # url(r'^comebh/', include('comebh.foo.urls')),
     url(r'^$', 'inscricao.views.principal'),
     url(r'^sair/$', 'inscricao.views.sair'),
+    url(r'^editar_usuario/$', views.editar_usuario),
 
     url(r'^administrador/convites_coordenador', views.ver_convites_coordenador),
     url(r'^administrador/convidar_coordenador', views.convidar_coordenador),

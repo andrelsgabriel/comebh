@@ -7,6 +7,12 @@
 	{% csrf_token %}
 	<table>
 		{{ form.as_table }}
+		{% if coordenador %}
+		<tr>
+			<td></td>
+			<td><input type="checkbox" name="confraternista"/><label for="confraternista">Participará como confraternista?</label></td>
+		</tr>
+		{% endif %}
 		<tr>
 			<td></td>
 			<td><input type="submit" value="Enviar"/></td>

@@ -31,18 +31,17 @@ class ConviteCoordenador(forms.Form):
     nome = forms.CharField()
     email = forms.EmailField()
     juventude = forms.ModelChoiceField(queryset=models.JuventudeEspirita.objects.all(), empty_label=None)
-    is_confraternista = forms.BooleanField(label=u"Participará como confraternista", required=False)
 
 
 
 class NovoUsuario(forms.Form):
+    nome = forms.CharField(label="Nome completo")
+    email = forms.EmailField(label="Email")
+
     login = forms.CharField()
     senha = forms.CharField(widget=forms.PasswordInput())
     senha_confirmacao = forms.CharField(label=u"Confirmação da Senha", widget=forms.PasswordInput())
     codigo = forms.IntegerField(widget=forms.HiddenInput())
-
-    nome = forms.CharField(label="Nome completo")
-    email = forms.EmailField(label="Email")
 
     def clean(self):
         if 'login' in self.cleaned_data and \
@@ -54,6 +53,21 @@ class NovoUsuario(forms.Form):
             self.errors['codigo'] = (self.errors.get('codigo') or []) + [u"Código de cadastro inválido."]
 
         return self.cleaned_data
+
+    def clean_senha_confirmacao(self):
+        if self.cleaned_data['senha_confirmacao'] != self.cleaned_data['senha']:
+            self.errors['senha_confirmacao'] = ((self.errors.get('senha_confirmacao') or []) + 
+                                                [u"As senhas digitadas são diferentes."])
+
+        return self.cleaned_data['senha_confirmacao']
+
+
+
+class AlterarUsuario(forms.Form):
+    nome = forms.CharField(label="Nome completo")
+    email = forms.EmailField()
+    senha = forms.CharField(widget=forms.PasswordInput(), required=False)
+    senha_confirmacao = forms.CharField(label=u"Confirmação da senha", widget=forms.PasswordInput(), required=False)    
 
     def clean_senha_confirmacao(self):
         if self.cleaned_data['senha_confirmacao'] != self.cleaned_data['senha']:
