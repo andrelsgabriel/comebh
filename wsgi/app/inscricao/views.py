@@ -375,7 +375,7 @@ def editar_dados(request):
         if confraternista.juventude != request.user.coordenador.juventude:
           return HttpResponseForbidden()
 
-        if not confraternista.autorizado and not is_coordenador:
+        if not confraternista.autorizado:
             mostrar_link_autorizacao = True
 
     else:
