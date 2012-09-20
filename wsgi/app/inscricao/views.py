@@ -297,7 +297,7 @@ def novo_usuario(request):
 
                 if (codigo.juventude.limite_confraternistas -
                     codigo.juventude.codigos_cadastro.count() -
-                    codigo.juventude.confraternistas.count()) <= 0:
+                    codigo.juventude.confraternistas.count()) < 0:
                     if codigo.coordenador:
                         messages.error(request, u"O limite de cadastros de confraternistas desta Juventude Espírita foi atingido. Entre em contato com a coordenação geral.")
                     else:
