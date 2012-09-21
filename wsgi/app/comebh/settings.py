@@ -43,8 +43,6 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     VALOR_INSCRICAO = Decimal("1.00")
     VALOR_CAMISA = Decimal("0.50")
 
-    PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
-    PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
 
 
 elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
@@ -209,7 +207,6 @@ LOGGING = {
     }
 }
 
-APPEND_SLASH = False
 DEFAULT_CHARSET = "UTF-8"
 
 LOGIN_URL = "/login"
