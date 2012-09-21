@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     url(r'^confraternista/realizar_pagamento', views.confraternista_realizar_pagamento),
     url(r'^confraternista/imprimir_autorizacao_pais', views.imprimir_autorizacao_pais),
 
-    url(r'^notificacao', pagseguro.processar_notificacao),
+    url(r'^notificacao/?', pagseguro.processar_notificacao),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
