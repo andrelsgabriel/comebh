@@ -92,11 +92,11 @@ def gerar_pagamento(confraternistas, usuario):
 def processar_notificacao(request):
 	codigo = request.POST.get("notificationCode")
 
-	r = urllib2.Request(url_notificacao(codigo) + "?" + 
+	r = urllib.urlopen(url_notificacao(codigo) + "?" + 
 						urllib.urlencode({'email': settings.PAGSEGURO_EMAIL_CONTA,
 										  'token': settings.PAGSEGURO_TOKEN}))
 
-	xml = urllib2.urlopen(r).read()
+	xml = r.read()
 
 	print "Recebido do PagSeguro: ", xml
 
@@ -112,4 +112,4 @@ def processar_notificacao(request):
 
 	pagamento.save()
 
-	return HttpResponse("")
+	return HttpResponse(u"Notificação processada.")
