@@ -133,7 +133,7 @@ class Confraternista(models.Model):
     uso_medicamento = models.TextField(u"Uso controlado de medicamento", null=True, blank=True)
     alergia = models.TextField(null=True, blank=True)
 
-    tamanho_camisa = models.CharField(null=True, blank=True, max_length=1, 
+    tamanho_camisa = models.CharField(u"tamanho da camisa", null=True, blank=True, max_length=1, 
         choices=TAMANHOS_CAMISA)
 
     pagamento_inscricao = models.ForeignKey(Pagamento, null=True, blank=True, related_name="confraternistas")
@@ -190,8 +190,8 @@ class Confraternista(models.Model):
                     return queryset.filter(pagamento_inscricao__in=Pagamento.objects.filter(estado=self.value()))
                 
 
-        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", "preco_inscricao")
-        list_filter = ("juventude", "autorizado", "voluntario_manutencao", FiltroPorIdade, FiltroPorEstadoPagamento)
+        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", "preco_inscricao", "tamanho_camisa")
+        list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa", FiltroPorIdade, FiltroPorEstadoPagamento)
         search_fields = ("juventude", "data_nascimento")
         ordering = ("juventude",)
 
