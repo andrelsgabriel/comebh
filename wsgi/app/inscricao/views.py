@@ -102,7 +102,7 @@ def salvar_juventude(request):
         messages.add_message(request, messages.INFO, "Dados da juventude salvos com sucesso!")
         return HttpResponseRedirect("/coordenador/editar_juventude")
     else:
-        return render_to_response('/coordenador/editar_juventude.html', 
+        return render_to_response('coordenador/editar_juventude.html', 
                                   RequestContext(request, {'form' : form}))
 
 
