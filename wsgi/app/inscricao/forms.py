@@ -88,7 +88,7 @@ class InscricaoConfraternista(forms.ModelForm):
     sexo = forms.ChoiceField(choices=(("M", "Masculino"), ("F", "Feminino")))
     data_nascimento = forms.DateField()
     ano_ingresso_mocidade = forms.IntegerField()
-    comebhs_anteriores = forms.CharField()
+    comebhs_anteriores = forms.CharField(required=False)
 
     logradouro = forms.CharField()
     bairro = forms.CharField()
