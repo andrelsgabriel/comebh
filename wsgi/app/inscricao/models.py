@@ -111,7 +111,7 @@ class Confraternista(models.Model):
     identidade = models.CharField(max_length=255, blank=True)
     nome_cracha = models.CharField(max_length=255, blank=True)
     juventude = models.ForeignKey(JuventudeEspirita, related_name="confraternistas")
-    data_nascimento = models.DateField(blank=True, null=True)
+    data_nascimento = models.DateField(null=True)
     voluntario_manutencao = models.BooleanField(default=False)
     autorizado = models.BooleanField(default=False)
     sexo = models.CharField(max_length=1, choices= (("M", "Masculino"), ("F", "Feminino")), null=True, blank=True)

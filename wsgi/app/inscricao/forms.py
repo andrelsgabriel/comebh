@@ -52,6 +52,10 @@ class NovoUsuario(forms.Form):
             models.CodigoCadastro.objects.filter(codigo=self.cleaned_data['codigo']).count() == 0:
             self.errors['codigo'] = (self.errors.get('codigo') or []) + [u"Código de cadastro inválido."]
 
+        if 'nome' in self.cleaned_data and \
+            len(self.cleaned_data['nome'].split(" ")) == 1:
+            self.errors['nome'] = (self.errors.get('nome') or []) + [u"Digite seu nome completo, não apenas o primeiro nome."]
+
         return self.cleaned_data
 
     def clean_senha_confirmacao(self):
