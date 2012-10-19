@@ -13,7 +13,7 @@
     function validarAceitacaoRegulamento(){
 
         if($('input[name="r_comprar_camisa"][value="1"]').is(":checked")){
-           if(!$('#id_tamanho_camisa').val()){
+          if(!$('#id_tamanho_camisa').val()){
             alert("Você escolheu comprar a camisa, mas não especificou um tamanho. Por favor, escolha um tamanho para sua");
             return false;
           }

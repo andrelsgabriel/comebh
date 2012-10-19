@@ -9,6 +9,8 @@ import urllib
 import urllib2
 import xml.etree.ElementTree as ET
 
+import email
+
 INSCRICAO_COM_CAMISA = {"id": 1, "descricao": "Inscrição na COMEBH 2013 + Camisa", "valor": settings.VALOR_INSCRICAO + settings.VALOR_CAMISA}
 INSCRICAO_SEM_CAMISA = {"id": 2, "descricao": "Inscrição na COMEBH 2013", "valor": settings.VALOR_INSCRICAO}
 
@@ -105,11 +107,19 @@ def processar_notificacao(request):
 	id_pagamento = int(root.find("reference").text)
 	pagamento = models.Pagamento.objects.get(id=id_pagamento)
 
+	pago_anteriormente = pagamento.pago
+
 	pagamento.transacao_pagseguro = root.find("code").text
 	pagamento.estado = int(root.find("status").text)
 	pagamento.valor_bruto = Decimal(root.find("grossAmount").text)
 	pagamento.valor_liquido = Decimal(root.find("netAmount").text)
 
 	pagamento.save()
+
+	if pagamento.pago and not pago_anteriormente:
+		for c in pagamento.confraternistas.all():
+			print "Recebido o pagamento de {}".format(c.usuario.first_name)
+			enviar_email(c.usuario.email, "Seu pagamento foi recebido!", "mail/pagamento_recebido.html",
+						 {'nome': c.usuario.first_name})
 
 	return HttpResponse(u"Notificação processada.")

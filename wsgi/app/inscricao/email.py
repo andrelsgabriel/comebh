@@ -12,6 +12,8 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
     if type(destinatarios) not in (list, tuple):
         destinatarios = (destinatarios,)
 
+    print "Enviando email {} para {}".format(template, ",".join(destinatarios))
+
     data = urllib.urlencode({'from': settings.DEFAULT_FROM_EMAIL,
                              'from_name': settings.EMAIL_FROM_NAME,
                              'to': ",".join(destinatarios),
