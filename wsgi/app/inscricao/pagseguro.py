@@ -118,7 +118,7 @@ def processar_notificacao(request):
 
 	if pagamento.pago and not pago_anteriormente:
 		for c in pagamento.confraternistas.all():
-			print "Recebido o pagamento de {}".format(c.usuario.first_name)
+			print "Recebido o pagamento de {0}".format(c.usuario.first_name)
 			enviar_email(c.usuario.email, "Seu pagamento foi recebido!", "mail/pagamento_recebido.html",
 						 {'nome': c.usuario.first_name})
 
