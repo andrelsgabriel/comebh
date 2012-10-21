@@ -408,7 +408,7 @@ def editar_dados(request):
         confraternista.save()
         messages.add_message(request, messages.INFO, "Dados de inscrição salvos com sucesso!")
 
-        if is_confraternista and request.user.confraternista == confraternista:
+        if is_confraternista and not is_coordenador and request.user.confraternista == confraternista:
 
             enviar_email(request.user.email, 
                          u"Seus dados de inscrição foram salvos",
