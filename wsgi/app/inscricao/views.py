@@ -402,7 +402,7 @@ def editar_dados(request):
         if request.POST['r_comprar_camisa'] == '0':
             confraternista.tamanho_camisa = None
 
-        if is_coordenador and request.user.confraternista == confraternista:
+        if is_coordenador and is_confraternista and request.user.confraternista == confraternista:
             confraternista.autorizado = True
 
         confraternista.save()
