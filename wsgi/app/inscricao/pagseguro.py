@@ -109,6 +109,8 @@ def processar_notificacao(request):
 
 	pago_anteriormente = pagamento.pago
 
+	print "Pago anteriormente?", pago_anteriormente
+
 	pagamento.transacao_pagseguro = root.find("code").text
 	pagamento.estado = int(root.find("status").text)
 	pagamento.valor_bruto = Decimal(root.find("grossAmount").text)
@@ -116,9 +118,13 @@ def processar_notificacao(request):
 
 	pagamento.save()
 
+	print "Pago?", pagamento.pago
+
 	if pagamento.pago and not pago_anteriormente:
 		for c in pagamento.confraternistas.all():
+
 			print "Recebido o pagamento de {0}".format(c.usuario.first_name)
+			
 			enviar_email(c.usuario.email, "Seu pagamento foi recebido!", "mail/pagamento_recebido.html",
 						 {'nome': c.usuario.first_name})
 
