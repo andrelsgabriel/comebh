@@ -122,6 +122,17 @@ def novo_confraternista(request):
 
 
 
+def enviar_convite_confraternista(request, codigo):
+    enviar_email(codigo.email, 
+                 u"Convite para inscrição na COMEBH Noroeste 2013", 
+                 "mail/confraternista_convidado.html",
+                 {'nome' : codigo.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
+
+    messages.add_message(request, messages.INFO, "Confraternista convidado com sucesso!")
+    messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(codigo.email))
+
+
+
 @user_is_coordenador
 def criar_codigo_cadastro(request):
     juventude = request.user.coordenador.juventude
@@ -141,20 +152,27 @@ def criar_codigo_cadastro(request):
         codigo.save()
 
         try:
-            enviar_email(email, 
-                         u"Convite para inscrição na COMEBH Noroeste 2013", 
-                         "mail/confraternista_convidado.html",
-                         {'nome' : nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
+            enviar_convite_confraternista(request, codigo)
         except Exception as e:
             import traceback
             traceback.print_exc(e)
             codigo.delete()
             messages.add_message(request, messages.ERROR, "Erro ao enviar email. Verifique o email digitado e tente novamente.")
-        else:
-            messages.add_message(request, messages.INFO, "Confraternista convidado com sucesso!")
-            messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
     else:
         messages.add_message(request, messages.ERROR, u"É necessário informar nome e email para convidar um confraternista.")
+
+    return HttpResponseRedirect("/coordenador/novo_confraternista")
+
+
+
+@user_is_coordenador
+def reenviar_email_convite(request):
+    codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET["codigo"]))
+
+    try:
+        enviar_convite_confraternista(request, codigo)
+    except Exception as e:
+        messages.add_message(request, messages.ERROR, "Erro ao enviar email. Verifique o email digitado e tente novamente.")
 
     return HttpResponseRedirect("/coordenador/novo_confraternista")
 

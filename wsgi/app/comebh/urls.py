@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^coordenador/limparInscricoes', views.limpar_inscricoes),
     url(r'^coordenador/pagarInscricoes', views.redirecionar_pagamento),
     url(r'^coordenador/autorizacao_casa_espirita', views.imprimir_autorizacao_casa_espirita),
+    url(r'^coordenador/reenviar_email_convite', views.reenviar_email_convite),
     url(r'^recuperar_senha', views.recuperar_senha),
 
     url(r'^cadastro/', views.novo_usuario),

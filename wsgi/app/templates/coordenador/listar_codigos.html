@@ -14,6 +14,7 @@
 			<th>Nome</th>
 			<th>Email</th>
 			<th>&nbsp;</th>
+			<th>&nbsp;</th>
 		</thead>
 		<tbody>
 			{% for c in codigos %}
@@ -21,6 +22,7 @@
 				<td>{{ c.nome }}</td>
 				<td>{{ c.email }}</td>
 				<td><a href="/coordenador/desfazer_convite?codigo={{c.codigo}}">Desfazer convite</a></td>
+				<td><a href="/coordenador/reenviar_email_convite?codigo={{c.codigo}}">Reenviar Convite</a></td>
 			</tr>
 			{% endfor %}
 		</tbody>

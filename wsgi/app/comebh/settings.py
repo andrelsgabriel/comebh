@@ -18,7 +18,7 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'comebh2',
+            'NAME': 'inscricao',
             'USER': 'comebh',
             'PASSWORD': 'comebh',
             'HOST': '',
@@ -35,7 +35,8 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
 
     EMAIL_REMOTE_SENDER = "http://localhost:8080/email/enviar"
     EMAIL_TOKEN = "127003923520501950085302456561080789870"
-
+    EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
+    
     SITE_URL = "http://localhost:8000"
 
     PAGSEGURO_EMAIL_CONTA = "gabriel.poesia@gmail.com"
