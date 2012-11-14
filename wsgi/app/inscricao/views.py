@@ -200,6 +200,16 @@ def desfazer_convite_coordenador(request):
     return HttpResponseRedirect("/administrador/convites_coordenador")
 
 
+
+def enviar_convite_coordenador(request, codigo):
+  enviar_email(codigo.email, 
+               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013", 
+               "mail/coordenador_convidado.html",
+               {'nome' : codigo.nome, 'juventude': codigo.juventude.nome, 
+                'url': settings.SITE_URL, 'codigo': codigo.codigo})
+
+
+
 @user_passes_test(lambda u: u.is_staff)
 def convidar_coordenador(request):
     juventude = models.JuventudeEspirita.objects.get(id=int(request.POST["juventude"]))
@@ -216,10 +226,7 @@ def convidar_coordenador(request):
       codigo.save()
 
       try:
-          enviar_email(email, 
-                       u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013", 
-                       "mail/coordenador_convidado.html",
-                       {'nome' : nome, 'juventude': juventude.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
+          enviar_convite_coordenador(request, codigo)
       except Exception as e:
           import traceback
           traceback.print_exc(e)
@@ -231,6 +238,19 @@ def convidar_coordenador(request):
           messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
       
     return HttpResponseRedirect("/administrador/convites_coordenador")
+
+
+
+@user_passes_test(lambda u: u.is_staff)
+def reenviar_convite_coordenador(request):
+  try:    
+    codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET.get("codigo")))
+    enviar_convite_coordenador(request, codigo)
+    messages.info(request, "Convite reenviado!")
+  except:
+    messages.error(request, "Erro interno ao reenviar convite.")
+
+  return HttpResponseRedirect("/administrador/convites_coordenador")
 
 
 

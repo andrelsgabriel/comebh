@@ -11,12 +11,14 @@
 			<th>Nome</th>
 			<th>Email</th>
 			<th>&nbsp;</th>
+			<th>&nbsp;</th>
 		</thead>
 		<tbody>
 			{% for c in codigos %}
 			<tr>
 				<td>{{ c.nome }}</td>
 				<td>{{ c.email }}</td>
+				<td><a href="/administrador/reenviar_convite_coordenador?codigo={{c.codigo}}">Reenviar convite</a></td>
 				<td><a href="/administrador/desfazer_convite_coordenador?codigo={{c.codigo}}">Desfazer convite</a></td>
 			</tr>
 			{% endfor %}

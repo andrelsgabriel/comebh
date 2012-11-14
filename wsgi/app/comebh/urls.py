@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 
     url(r'^administrador/convites_coordenador', views.ver_convites_coordenador),
     url(r'^administrador/convidar_coordenador', views.convidar_coordenador),
+    url(r'^administrador/reenviar_convite_coordenador', views.reenviar_convite_coordenador),
     url(r'^administrador/desfazer_convite_coordenador', views.desfazer_convite_coordenador),
 
     url(r'^coordenador/editar_juventude', views.editar_juventude),
