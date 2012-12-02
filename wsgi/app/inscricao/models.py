@@ -2,6 +2,7 @@
 
 import datetime
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -156,6 +157,8 @@ class Confraternista(models.Model):
 
     nome = property(lambda self: self.usuario.get_full_name())
     preco_inscricao = property(lambda self: "R${0:.2f}".format(self.valor_inscricao()))
+    tem_restricoes_alimentares = property(lambda self: u"Sim" if self.dieta_especial else u"Não")
+    deseja_ajudar_manutencao = property(lambda self: u"Sim" if self.voluntario_manutencao else u"Não")
 
     class Admin(admin.ModelAdmin):
 
@@ -188,10 +191,28 @@ class Confraternista(models.Model):
             def queryset(self, request, queryset):
                 if self.value():
                     return queryset.filter(pagamento_inscricao__in=Pagamento.objects.filter(estado=self.value()))
+
+
+        class FiltroPorRestricaoAlimentar(admin.SimpleListFilter):
+            title = u"restrição alimentar"
+            parameter_name = "restricao_alimentar"
+
+            def lookups(*args):
+                return (("S", u"Possui"), 
+                        ("N", u"Não possui"))
+
+            def queryset(self, request, queryset):
+                if self.value():
+                    if self.value() == 'S':
+                        return queryset.filter(Q(dieta_especial__isnull=False) & ~Q(dieta_especial=""))
+                    else:
+                        return queryset.filter(Q(dieta_especial__isnull=True) | Q(dieta_especial=""))
                 
 
-        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", "preco_inscricao", "tamanho_camisa")
-        list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa", FiltroPorIdade, FiltroPorEstadoPagamento)
+        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", 
+                        "preco_inscricao", "tamanho_camisa", "tem_restricoes_alimentares", "deseja_ajudar_manutencao")
+        list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa", 
+                        FiltroPorIdade, FiltroPorEstadoPagamento, FiltroPorRestricaoAlimentar)
         search_fields = ("juventude", "data_nascimento")
         ordering = ("juventude",)
 
