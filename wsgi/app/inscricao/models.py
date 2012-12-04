@@ -210,7 +210,7 @@ class Confraternista(models.Model):
                 
 
         list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", 
-                        "preco_inscricao", "tamanho_camisa", "tem_restricoes_alimentares", "deseja_ajudar_manutencao")
+                        "preco_inscricao", "tamanho_camisa", "tem_restricoes_alimentares")
         list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa", 
                         FiltroPorIdade, FiltroPorEstadoPagamento, FiltroPorRestricaoAlimentar)
         search_fields = ("juventude", "data_nascimento")
