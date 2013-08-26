@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<h1>Editar COMEBH vigente</h1>
+
+<form action="/administrador/salvar_comebh" method="POST">
+	{% csrf_token %}
+	<table>
+		{{ form.as_table }}
+        <script type="text/javascript">
+            $(function() { 
+                    $("#id_data_evento").datepicker();
+                    $("#id_data_limite_inscricoes").datepicker();
+              });
+        </script>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="Salvar"/></td>
+		</tr>
+	</table>
+</form>
+
+{% endblock %}

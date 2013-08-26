@@ -15,6 +15,7 @@
 	{% if user.is_staff or user.is_superuser %}
 		<li><a href="/admin">Acessar Administração</a></li>
 		<li><a href="/administrador/convites_coordenador">Convidar coordenadores</a></li>
+        <li><a href="/administrador/editar_comebh">Configurar COMEBH atual</a></li>
 	{% endif %}
 
 	{% if user.coordenador %}

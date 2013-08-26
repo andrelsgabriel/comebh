@@ -8,7 +8,7 @@ class EditarJuventude(forms.ModelForm):
 
     contato = forms.CharField(widget=forms.Textarea())
 
-    nome_casa_espirita = forms.CharField(widget=forms.TextInput(attrs={"size":40}), 
+    nome_casa_espirita = forms.CharField(widget=forms.TextInput(attrs={"size":40}),
                                          label="Nome da Casa Espírita")
 
     logradouro = forms.CharField()
@@ -60,7 +60,7 @@ class NovoUsuario(forms.Form):
 
     def clean_senha_confirmacao(self):
         if self.cleaned_data['senha_confirmacao'] != self.cleaned_data['senha']:
-            self.errors['senha_confirmacao'] = ((self.errors.get('senha_confirmacao') or []) + 
+            self.errors['senha_confirmacao'] = ((self.errors.get('senha_confirmacao') or []) +
                                                 [u"As senhas digitadas são diferentes."])
 
         return self.cleaned_data['senha_confirmacao']
@@ -71,11 +71,11 @@ class AlterarUsuario(forms.Form):
     nome = forms.CharField(label="Nome completo")
     email = forms.EmailField()
     senha = forms.CharField(widget=forms.PasswordInput(), required=False)
-    senha_confirmacao = forms.CharField(label=u"Confirmação da senha", widget=forms.PasswordInput(), required=False)    
+    senha_confirmacao = forms.CharField(label=u"Confirmação da senha", widget=forms.PasswordInput(), required=False)
 
     def clean_senha_confirmacao(self):
         if self.cleaned_data['senha_confirmacao'] != self.cleaned_data['senha']:
-            self.errors['senha_confirmacao'] = ((self.errors.get('senha_confirmacao') or []) + 
+            self.errors['senha_confirmacao'] = ((self.errors.get('senha_confirmacao') or []) +
                                                 [u"As senhas digitadas são diferentes."])
 
         return self.cleaned_data['senha_confirmacao']
@@ -120,5 +120,8 @@ class DadosUsuario(forms.Form):
 
     senha = forms.CharField(label=u"Nova senha", widget=forms.PasswordInput())
     senha_confirmacao = forms.CharField(label=u"Confirmação da Senha", widget=forms.PasswordInput())
-    
-	
+
+
+class Comebh(forms.ModelForm):
+    class Meta:
+        model = models.Comebh

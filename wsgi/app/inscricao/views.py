@@ -48,12 +48,12 @@ def recuperar_senha(request):
             u.save()
 
             enviar_email(u.email, u"Recuperação de senha", "mail/recuperar_senha.html",
-                        {"usuario": u, "senha": senha})            
+                        {"usuario": u, "senha": senha})
         else:
             messages.error(request, u"Nenhum usuário com o email {0} informado foi encontrado.".format(email))
             email = None
 
-    return render_to_response("recuperar_senha.html", 
+    return render_to_response("recuperar_senha.html",
                               RequestContext(request, {"email": email}))
 
 
@@ -65,7 +65,7 @@ def editar_usuario(request):
 
         if form.is_valid():
             request.user.email = form.cleaned_data["email"]
-            
+
             if form.cleaned_data["senha"]:
                 request.user.set_password(form.cleaned_data["senha"])
 
@@ -88,7 +88,7 @@ def editar_usuario(request):
 def editar_juventude(request):
     form = forms.EditarJuventude(instance=request.user.coordenador.juventude)
 
-    return render_to_response('coordenador/editar_juventude.html', 
+    return render_to_response('coordenador/editar_juventude.html',
                               RequestContext(request, {'form' : form}))
 
 
@@ -102,7 +102,7 @@ def salvar_juventude(request):
         messages.add_message(request, messages.INFO, "Dados da juventude salvos com sucesso!")
         return HttpResponseRedirect("/coordenador/editar_juventude")
     else:
-        return render_to_response('coordenador/editar_juventude.html', 
+        return render_to_response('coordenador/editar_juventude.html',
                                   RequestContext(request, {'form' : form}))
 
 
@@ -110,9 +110,9 @@ def salvar_juventude(request):
 @user_is_coordenador
 def novo_confraternista(request):
     juventude = request.user.coordenador.juventude
-    
+
     convites_disponiveis = (juventude.limite_confraternistas -
-                            juventude.codigos_cadastro.count() - 
+                            juventude.codigos_cadastro.count() -
                             juventude.confraternistas.count())
 
     return render_to_response("coordenador/listar_codigos.html",
@@ -123,8 +123,8 @@ def novo_confraternista(request):
 
 
 def enviar_convite_confraternista(request, codigo):
-    enviar_email(codigo.email, 
-                 u"Convite para inscrição na COMEBH Noroeste 2013", 
+    enviar_email(codigo.email,
+                 u"Convite para inscrição na COMEBH Noroeste 2013",
                  "mail/confraternista_convidado.html",
                  {'nome' : codigo.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
 
@@ -138,10 +138,10 @@ def criar_codigo_cadastro(request):
     juventude = request.user.coordenador.juventude
 
     form = forms.ConviteConfraternista(request.POST)
-    
+
     if juventude.confraternistas.count() + juventude.codigos_cadastro.count() >= \
        juventude.limite_confraternistas:
-        messages.add_message(request, messages.ERROR, 
+        messages.add_message(request, messages.ERROR,
             "O limite de confraternistas da sua Juventude Espírita foi atingido.\n"
             "Caso queira cadastrar outros confraternistas, entre em contato com a coordenação geral.")
     elif form.is_valid():
@@ -183,7 +183,7 @@ def ver_convites_coordenador(request):
     codigos = models.CodigoCadastro.objects.filter(coordenador=True)
     form = forms.ConviteCoordenador()
 
-    return render_to_response("administrador/listar_codigos.html", 
+    return render_to_response("administrador/listar_codigos.html",
                               RequestContext(request, {"codigos": codigos,
                                                        "form": form}))
 
@@ -202,10 +202,10 @@ def desfazer_convite_coordenador(request):
 
 
 def enviar_convite_coordenador(request, codigo):
-  enviar_email(codigo.email, 
-               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013", 
+  enviar_email(codigo.email,
+               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013",
                "mail/coordenador_convidado.html",
-               {'nome' : codigo.nome, 'juventude': codigo.juventude.nome, 
+               {'nome' : codigo.nome, 'juventude': codigo.juventude.nome,
                 'url': settings.SITE_URL, 'codigo': codigo.codigo})
 
 
@@ -234,16 +234,16 @@ def convidar_coordenador(request):
           messages.add_message(request, messages.ERROR, "Erro ao enviar email. Verifique o email digitado e tente novamente.")
 
       else:
-          messages.add_message(request, messages.INFO, "Coordenador convidado com sucesso!")        
+          messages.add_message(request, messages.INFO, "Coordenador convidado com sucesso!")
           messages.add_message(request, messages.INFO, u"Foi enviado um email a {0} com informações sobre o cadastro.".format(email))
-      
+
     return HttpResponseRedirect("/administrador/convites_coordenador")
 
 
 
 @user_passes_test(lambda u: u.is_staff)
 def reenviar_convite_coordenador(request):
-  try:    
+  try:
     codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET.get("codigo")))
     enviar_convite_coordenador(request, codigo)
     messages.info(request, "Convite reenviado!")
@@ -270,7 +270,7 @@ def desfazer_convite(request):
 def listar_confraternistas(request):
     confraternistas = models.Confraternista.objects.filter(juventude=request.user.coordenador.juventude)
 
-    return render_to_response("coordenador/listar_confraternistas.html", 
+    return render_to_response("coordenador/listar_confraternistas.html",
                               RequestContext(request, {"confraternistas": confraternistas,
                                                        "juventude": request.user.coordenador.juventude}))
 
@@ -305,11 +305,11 @@ def novo_usuario(request):
 
     if id_codigo and id_codigo.isdigit() and models.CodigoCadastro.objects.filter(codigo=int(id_codigo)).count():
         codigo_cadastro = models.CodigoCadastro.objects.get(codigo=int(id_codigo))
-        form = forms.NovoUsuario(initial={'nome':   codigo_cadastro.nome, 
+        form = forms.NovoUsuario(initial={'nome':   codigo_cadastro.nome,
                                           'email':  codigo_cadastro.email,
                                           'codigo': codigo_cadastro.codigo})
         coordenador = codigo_cadastro.coordenador
-            
+
     elif request.method == 'POST':
         form = forms.NovoUsuario(request.POST)
     else:
@@ -358,8 +358,8 @@ def novo_usuario(request):
 
             messages.add_message(request, messages.INFO, u"Seu cadastro foi realizado! Você pode fazer login agora.")
             return HttpResponseRedirect("/")
-    
-    return render_to_response("cadastro.html", 
+
+    return render_to_response("cadastro.html",
             RequestContext(request, {"form": form, "coordenador": coordenador}))
 
 
@@ -424,7 +424,7 @@ def editar_dados(request):
           return HttpResponseRedirect("/confraternista/editar_dados")
 
     form = (forms.InscricaoConfraternista(instance=confraternista)
-            if request.method != 'POST' 
+            if request.method != 'POST'
             else forms.InscricaoConfraternista(request.POST))
 
     if form.is_valid():
@@ -448,7 +448,7 @@ def editar_dados(request):
 
         if is_confraternista and not is_coordenador and request.user.confraternista == confraternista:
 
-            enviar_email(request.user.email, 
+            enviar_email(request.user.email,
                          u"Seus dados de inscrição foram salvos",
                          "mail/confraternista_aguardar_aprovacao.html",
                          {'confraternista': request.user.confraternista})
@@ -463,10 +463,10 @@ def editar_dados(request):
         return HttpResponseRedirect("/")
 
     return render_to_response("confraternista/editar_dados.html",
-                              RequestContext(request, 
+                              RequestContext(request,
                                              {"form": form,
                                               "id": conf_id,
-                                              "juventude": request.user.confraternista.juventude 
+                                              "juventude": request.user.confraternista.juventude
                                                            if is_confraternista
                                                            else request.user.coordenador.juventude,
                                               "nome": confraternista.usuario.get_full_name(),
@@ -482,7 +482,7 @@ def imprimir_autorizacao_pais(request):
 
     print "Confraternista: ", confraternista.usuario.get_full_name()
 
-    return render_to_response("confraternista/autorizacao.html", 
+    return render_to_response("confraternista/autorizacao.html",
                               RequestContext(request, {"confraternista": confraternista}))
 
 
@@ -501,3 +501,24 @@ def imprimir_autorizacao_casa_espirita(request):
 def confraternista_realizar_pagamento(request):
   url = pagseguro.gerar_pagamento([request.user.confraternista], request.user)
   return HttpResponseRedirect(url)
+
+
+
+@user_passes_test(lambda u: u.is_staff)
+def editar_comebh(request):
+    form = forms.Comebh(instance=models.Comebh.comebh_vigente())
+
+    return render_to_response("administrador/editar_comebh.html",
+                              RequestContext(request, {"form": form}))
+
+@user_passes_test(lambda u: u.is_staff)
+def salvar_comebh(request):
+    comebh_atual = models.Comebh.comebh_vigente()
+    form = forms.Comebh(request.POST, instance=comebh_atual)
+
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.INFO, u"Configurações da COMEBH salvas com sucesso!.")
+
+    return render_to_response("administrador/editar_comebh.html",
+                              RequestContext(request, {"form": form}))

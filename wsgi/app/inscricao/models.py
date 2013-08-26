@@ -67,7 +67,7 @@ class Coordenador(models.Model):
 
 class Pagamento(models.Model):
 
-    #possíveis estados de uma transação do PagSeguro 
+    #possíveis estados de uma transação do PagSeguro
     #pagseguro.uol.com.br/v2/guia-de-integracao/consulta-de-transacoes-por-codigo.html
     ESTADOS_PAGAMENTO = (
             (0, u"Desconhecido"),
@@ -103,12 +103,12 @@ class Pagamento(models.Model):
 
 class Confraternista(models.Model):
 
-    TAMANHOS_CAMISA = (("P", u"Pequena"), 
+    TAMANHOS_CAMISA = (("P", u"Pequena"),
                        ("M", u"Média"),
                        ("G", u"Grande"))
 
     usuario = models.OneToOneField(User)
-    
+
     identidade = models.CharField(max_length=255, blank=True)
     nome_cracha = models.CharField(max_length=255, blank=True)
     juventude = models.ForeignKey(JuventudeEspirita, related_name="confraternistas")
@@ -120,7 +120,7 @@ class Confraternista(models.Model):
     logradouro = models.CharField(max_length=255, null=True, blank=True)
     bairro = models.CharField(max_length=255, null=True, blank=True)
     cidade = models.CharField(max_length=255, null=True, blank=True)
-    
+
     telefone = models.CharField(max_length=20, null=True, blank=True)
     contato_urgencia = models.CharField(u"contato (para urgência)", max_length=255, null=True, blank=True)
     parentesco_contato_urgencia = models.CharField(u"parentesco do contato de urgência", max_length=255, null=True, blank=True)
@@ -134,7 +134,7 @@ class Confraternista(models.Model):
     uso_medicamento = models.TextField(u"Uso controlado de medicamento", null=True, blank=True)
     alergia = models.TextField(null=True, blank=True)
 
-    tamanho_camisa = models.CharField(u"tamanho da camisa", null=True, blank=True, max_length=1, 
+    tamanho_camisa = models.CharField(u"tamanho da camisa", null=True, blank=True, max_length=1,
         choices=TAMANHOS_CAMISA)
 
     pagamento_inscricao = models.ForeignKey(Pagamento, null=True, blank=True, related_name="confraternistas")
@@ -167,7 +167,7 @@ class Confraternista(models.Model):
             parameter_name = "idade"
 
             def lookups(*args):
-                return (("M", "Maiores de idade"), 
+                return (("M", "Maiores de idade"),
                         ("m", "Menores de idade"))
 
             def queryset(self, request, queryset):
@@ -198,7 +198,7 @@ class Confraternista(models.Model):
             parameter_name = "restricao_alimentar"
 
             def lookups(*args):
-                return (("S", u"Possui"), 
+                return (("S", u"Possui"),
                         ("N", u"Não possui"))
 
             def queryset(self, request, queryset):
@@ -207,11 +207,11 @@ class Confraternista(models.Model):
                         return queryset.filter(Q(dieta_especial__isnull=False) & ~Q(dieta_especial=""))
                     else:
                         return queryset.filter(Q(dieta_especial__isnull=True) | Q(dieta_especial=""))
-                
 
-        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao", 
+
+        list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao",
                         "preco_inscricao", "tamanho_camisa", "tem_restricoes_alimentares")
-        list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa", 
+        list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa",
                         FiltroPorIdade, FiltroPorEstadoPagamento, FiltroPorRestricaoAlimentar)
         search_fields = ("juventude", "data_nascimento")
         ordering = ("juventude",)
@@ -232,7 +232,7 @@ class CodigoCadastro(models.Model):
 
             valido = False
 
-            while not valido:           
+            while not valido:
                 self.codigo = random.randint(10**5, 10**6)
                 valido = CodigoCadastro.objects.filter(codigo=self.codigo).count() == 0
 
@@ -244,13 +244,16 @@ class CodigoCadastro(models.Model):
 
 
 
-class ConfiguracaoCOMEBH(models.Model):
+class Comebh(models.Model):
 
     valor_inscricao = models.DecimalField(max_digits=10, decimal_places=2)
     valor_camisa = models.DecimalField(max_digits=10, decimal_places=2)
 
     data_evento = models.DateField()
     limite_inscricoes = models.IntegerField()
+
+    data_limite_inscricoes = models.DateField(u"Data limite para inscrições")
+    idade_minima = models.IntegerField(u"Idade mínima para participação (anos)")
 
     class Meta:
         verbose_name = u"Configuração da COMEBH"
@@ -259,5 +262,11 @@ class ConfiguracaoCOMEBH(models.Model):
     class Admin(admin.ModelAdmin):
         list_display = ("data", "valor_inscricao", "valor_camisa", "limite_inscricoes")
 
-    def configuracoes_vigentes():
-        return ConfiguracaoCOMEBH.objects.order_by("-data_evento")[0]
+    @staticmethod
+    def comebh_vigente():
+        if Comebh.objects.count() == 0:
+            return None
+        return Comebh.objects.order_by("-data_evento")[0]
+
+    def ano(self):
+        return self.data_evento.year
