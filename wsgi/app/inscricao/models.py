@@ -44,12 +44,50 @@ class JuventudeEspirita(models.Model):
         ordering = ("nome",)
 
 
+class Comebh(models.Model):
+
+    valor_inscricao = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_camisa = models.DecimalField(max_digits=10, decimal_places=2)
+
+    data_evento = models.DateField()
+    limite_inscricoes = models.IntegerField()
+
+    data_limite_inscricoes = models.DateField(u"Data limite para inscrições")
+    idade_minima = models.IntegerField(u"Idade mínima para participação (anos)")
+
+    class Meta:
+        verbose_name = u"Configuração da COMEBH"
+        verbose_name_plural = "Configurações Gerais da COMEBH"
+
+    class Admin(admin.ModelAdmin):
+        list_display = ("data", "valor_inscricao", "valor_camisa", "limite_inscricoes")
+
+    @staticmethod
+    def comebh_vigente():
+        if Comebh.objects.count() == 0:
+            return None
+        return Comebh.objects.order_by("-data_evento")[0]
+
+    def ano(self):
+        return self.data_evento.year
+
+    def __unicode__(self):
+        return "COMEBH {}".format(self.ano())
+
 
 class Coordenador(models.Model):
-    usuario = models.OneToOneField(User, related_name="coordenador")
+    usuario = models.ForeignKey(User, related_name="coordenadores")
     juventude = models.ForeignKey(JuventudeEspirita, related_name="coordenadores", verbose_name=u"Juventude Espírita")
+    comebh = models.ForeignKey(Comebh, related_name="coordenadores", null=True)
 
     nome = property(lambda self: self.usuario.get_full_name())
+
+    @staticmethod
+    def do_usuario(usuario):
+        if hasattr(usuario, 'coordenadores') and usuario.coordenadores.count():
+            c = usuario.coordenadores.order_by("-comebh__data_evento")[0]
+            if c.comebh == Comebh.comebh_vigente():
+                return c
 
     def __unicode__(self):
         return self.nome
@@ -58,9 +96,24 @@ class Coordenador(models.Model):
         verbose_name_plural = "Coordenadores"
 
     class Admin(admin.ModelAdmin):
+        class FiltroPorAno(admin.SimpleListFilter):
+            title = "Por ano"
+            parameter_name = "comebh"
+
+            def lookups(*args):
+                return tuple((str(comebh.ano()), comebh.ano()) for comebh in Comebh.objects.all())
+
+            def queryset(self, request, queryset):
+                if not self.value():
+                    return queryset
+                return queryset.filter(comebh__data_evento__year=self.value())
+
         list_display = ("nome", "juventude")
-        list_filter = ("juventude",)
+        list_filter = ("juventude", FiltroPorAno)
         search_fields = ("nome", "juventude")
+
+
+
         #ordering = ("nome",)
 
 
@@ -107,7 +160,7 @@ class Confraternista(models.Model):
                        ("M", u"Média"),
                        ("G", u"Grande"))
 
-    usuario = models.OneToOneField(User)
+    usuario = models.ForeignKey(User, related_name="confraternistas")
 
     identidade = models.CharField(max_length=255, blank=True)
     nome_cracha = models.CharField(max_length=255, blank=True)
@@ -139,21 +192,32 @@ class Confraternista(models.Model):
 
     pagamento_inscricao = models.ForeignKey(Pagamento, null=True, blank=True, related_name="confraternistas")
 
+    comebh = models.ForeignKey(Comebh, related_name="confraternistas", null=True)
+
+
+    @staticmethod
+    def do_usuario(usuario):
+        if hasattr(usuario, 'confraternistas') and usuario.confraternistas.count():
+            c = usuario.confraternistas.order_by("-comebh__data_evento")[0]
+            if c.comebh == Comebh.comebh_vigente():
+                return c
+
+
     def __unicode__(self):
         return self.usuario.get_full_name() + " (" + self.juventude.nome + ")"
 
 
     def precisa_autorizacao_pais(self):
+        c = Comebh.comebh_vigente()
         return self.data_nascimento and \
-            self.data_nascimento > datetime.date(settings.DATA_COMEBH.year - 18,
-                                                 settings.DATA_COMEBH.month,
-                                                 settings.DATA_COMEBH.day)
+            self.data_nascimento > datetime.date(c.data_evento.year - 18,
+                                                 c.data_evento.month,
+                                                 c.data_evento.day)
 
     def valor_inscricao(self):
-        if self.tamanho_camisa:
-            return settings.VALOR_INSCRICAO + settings.VALOR_CAMISA
+        c = Comebh.comebh_vigente()
+        return c.valor_inscricao + (c.valor_camisa if self.tamanho_camisa else 0)
 
-        return settings.VALOR_INSCRICAO
 
     nome = property(lambda self: self.usuario.get_full_name())
     preco_inscricao = property(lambda self: "R${0:.2f}".format(self.valor_inscricao()))
@@ -161,6 +225,19 @@ class Confraternista(models.Model):
     deseja_ajudar_manutencao = property(lambda self: u"Sim" if self.voluntario_manutencao else u"Não")
 
     class Admin(admin.ModelAdmin):
+
+        class FiltroPorAno(admin.SimpleListFilter):
+            title = "Por ano"
+            parameter_name = "comebh"
+
+            def lookups(*args):
+                return tuple((str(comebh.ano()), comebh.ano()) for comebh in Comebh.objects.all())
+
+            def queryset(self, request, queryset):
+                if not self.value():
+                    return queryset
+                return queryset.filter(comebh__data_evento__year=self.value())
+
 
         class FiltroPorIdade(admin.SimpleListFilter):
             title = "Por idade"
@@ -171,10 +248,11 @@ class Confraternista(models.Model):
                         ("m", "Menores de idade"))
 
             def queryset(self, request, queryset):
+                c = Comebh.comebh_vigente()
 
-                data_minima = datetime.date(settings.DATA_COMEBH.year - 18,
-                                            settings.DATA_COMEBH.month,
-                                            settings.DATA_COMEBH.day)
+                data_minima = datetime.date(c.data_evento.year - 18,
+                                            c.data_evento.month,
+                                            c.data_evento.day)
 
                 if self.value() == "m":
                     return queryset.filter(data_nascimento__gt=data_minima)
@@ -212,7 +290,7 @@ class Confraternista(models.Model):
         list_display = ("nome", "juventude", "data_nascimento", "autorizado", "pagamento_inscricao",
                         "preco_inscricao", "tamanho_camisa", "tem_restricoes_alimentares")
         list_filter = ("juventude", "autorizado", "voluntario_manutencao", "tamanho_camisa",
-                        FiltroPorIdade, FiltroPorEstadoPagamento, FiltroPorRestricaoAlimentar)
+                        FiltroPorAno, FiltroPorIdade, FiltroPorEstadoPagamento, FiltroPorRestricaoAlimentar)
         search_fields = ("juventude", "data_nascimento")
         ordering = ("juventude",)
 
@@ -242,31 +320,3 @@ class CodigoCadastro(models.Model):
     def __unicode__(self):
         return unicode(self.codigo)
 
-
-
-class Comebh(models.Model):
-
-    valor_inscricao = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_camisa = models.DecimalField(max_digits=10, decimal_places=2)
-
-    data_evento = models.DateField()
-    limite_inscricoes = models.IntegerField()
-
-    data_limite_inscricoes = models.DateField(u"Data limite para inscrições")
-    idade_minima = models.IntegerField(u"Idade mínima para participação (anos)")
-
-    class Meta:
-        verbose_name = u"Configuração da COMEBH"
-        verbose_name_plural = "Configurações Gerais da COMEBH"
-
-    class Admin(admin.ModelAdmin):
-        list_display = ("data", "valor_inscricao", "valor_camisa", "limite_inscricoes")
-
-    @staticmethod
-    def comebh_vigente():
-        if Comebh.objects.count() == 0:
-            return None
-        return Comebh.objects.order_by("-data_evento")[0]
-
-    def ano(self):
-        return self.data_evento.year

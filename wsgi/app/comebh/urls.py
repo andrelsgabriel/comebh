@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^administrador/desfazer_convite_coordenador', views.desfazer_convite_coordenador),
     url(r'^administrador/editar_comebh', views.editar_comebh),
     url(r'^administrador/salvar_comebh', views.salvar_comebh),
+    url(r'^administrador/criar_comebh', views.criar_comebh),
 
     url(r'^coordenador/editar_juventude', views.editar_juventude),
     url(r'^coordenador/salvar_juventude', views.salvar_juventude),

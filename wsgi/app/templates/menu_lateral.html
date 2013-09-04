@@ -16,10 +16,16 @@
 		<li><a href="/admin">Acessar Administração</a></li>
 		<li><a href="/administrador/convites_coordenador">Convidar coordenadores</a></li>
         <li><a href="/administrador/editar_comebh">Configurar COMEBH atual</a></li>
+        <li><a id="a_criar_comebh" href="/administrador/criar_comebh">Criar COMEBH</a></li>
+        <script type="text/javascript">
+            $("#a_criar_comebh").click(function() {
+                return confirm("Tem certeza de que deseja criar uma nova COMEBH? Isto mudará a COMEBH vigente, e iniciará o processo de arquivamento da COMEBH atual.");
+            });
+        </script>
 	{% endif %}
 
-	{% if user.coordenador %}
-		<li> {{ user.coordenador.juventude.nome }}
+	{% if coordenador %}
+		<li> {{ coordenador.juventude.nome }}
 			<ul>
 				<li><a href="/coordenador/editar_juventude">Editar dados</a></li>
 				<li><a href="/coordenador/listar_confraternistas">Confraternistas</a></li>
@@ -29,16 +35,16 @@
 		</li>
 	{% endif %}
 
-	{% if user.confraternista %}
+	{% if confraternista %}
 		<li> Confraternista
 			<ul>
 				<li><a href="/confraternista/editar_dados">Minha ficha de inscrição</a></li>
 				
-				{% if user.confraternista.autorizado and not user.confraternista.pagamento_inscricao.pago %}
+				{% if confraternista.autorizado and not confraternista.pagamento_inscricao.pago %}
 					<li><a target="_blank" onclick="return avisoPagamentoConfraternista();" href="/confraternista/realizar_pagamento">Pagar minha inscrição</a></li>
 				{% endif %}
 
-				{% if user.confraternista.precisa_autorizacao_pais and not user.confraternista.autorizado %}
+				{% if confraternista.precisa_autorizacao_pais and not confraternista.autorizado %}
 					<li><a href="/confraternista/imprimir_autorizacao_pais">Ficha de autorização dos pais</a></li>
 				{% endif %}
 			</ul>

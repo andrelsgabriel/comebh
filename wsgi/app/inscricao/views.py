@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, UserManager
@@ -8,16 +9,19 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib import messages
 from django.conf import settings
-import models
+from models import *
 import forms
 import pagseguro
 from email import enviar_email
 
 
+def process_context(request):
+    return {"coordenador": Coordenador.do_usuario(request.user),
+            "confraternista": Confraternista.do_usuario(request.user)}
+
 
 def user_is_coordenador(f):
-    return user_passes_test(lambda u: hasattr(u, 'coordenador'))(f)
-
+    return user_passes_test(lambda u: Coordenador.do_usuario(u))(f)
 
 
 @login_required
@@ -30,7 +34,6 @@ def principal(request):
 def sair(request):
     logout(request)
     return HttpResponseRedirect("/")
-
 
 
 def recuperar_senha(request):
@@ -86,7 +89,7 @@ def editar_usuario(request):
 
 @user_is_coordenador
 def editar_juventude(request):
-    form = forms.EditarJuventude(instance=request.user.coordenador.juventude)
+    form = forms.EditarJuventude(instance=Coordenador.do_usuario(request.user).juventude)
 
     return render_to_response('coordenador/editar_juventude.html',
                               RequestContext(request, {'form' : form}))
@@ -95,7 +98,7 @@ def editar_juventude(request):
 
 @user_is_coordenador
 def salvar_juventude(request):
-    form = forms.EditarJuventude(request.POST, instance=request.user.coordenador.juventude)
+    form = forms.EditarJuventude(request.POST, instance=Coordenador.do_usuario(request.user).juventude)
 
     if form.is_valid():
         form.save()
@@ -109,11 +112,11 @@ def salvar_juventude(request):
 
 @user_is_coordenador
 def novo_confraternista(request):
-    juventude = request.user.coordenador.juventude
+    juventude = Coordenador.do_usuario(request.user).juventude
 
     convites_disponiveis = (juventude.limite_confraternistas -
                             juventude.codigos_cadastro.count() -
-                            juventude.confraternistas.count())
+                            juventude.confraternistas.filter(comebh=Comebh.comebh_vigente()).count())
 
     return render_to_response("coordenador/listar_codigos.html",
                               RequestContext(request, {'codigos' : juventude.codigos_cadastro.all(),
@@ -135,12 +138,12 @@ def enviar_convite_confraternista(request, codigo):
 
 @user_is_coordenador
 def criar_codigo_cadastro(request):
-    juventude = request.user.coordenador.juventude
+    juventude = Coordenador.do_usuario(request.user).juventude
 
     form = forms.ConviteConfraternista(request.POST)
 
-    if juventude.confraternistas.count() + juventude.codigos_cadastro.count() >= \
-       juventude.limite_confraternistas:
+    if juventude.confraternistas.filter(comebh=Comebh.comebh_vigente()).count() + \
+       juventude.codigos_cadastro.count() >= juventude.limite_confraternistas:
         messages.add_message(request, messages.ERROR,
             "O limite de confraternistas da sua Juventude Espírita foi atingido.\n"
             "Caso queira cadastrar outros confraternistas, entre em contato com a coordenação geral.")
@@ -148,7 +151,7 @@ def criar_codigo_cadastro(request):
         email = form.cleaned_data["email"]
         nome = form.cleaned_data["nome"]
 
-        codigo = models.CodigoCadastro(juventude=juventude, confraternista=True, coordenador=False, email=email, nome=nome)
+        codigo = CodigoCadastro(juventude=juventude, confraternista=True, coordenador=False, email=email, nome=nome)
         codigo.save()
 
         try:
@@ -167,7 +170,7 @@ def criar_codigo_cadastro(request):
 
 @user_is_coordenador
 def reenviar_email_convite(request):
-    codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET["codigo"]))
+    codigo = CodigoCadastro.objects.get(codigo=int(request.GET["codigo"]))
 
     try:
         enviar_convite_confraternista(request, codigo)
@@ -180,7 +183,7 @@ def reenviar_email_convite(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def ver_convites_coordenador(request):
-    codigos = models.CodigoCadastro.objects.filter(coordenador=True)
+    codigos = CodigoCadastro.objects.filter(coordenador=True)
     form = forms.ConviteCoordenador()
 
     return render_to_response("administrador/listar_codigos.html",
@@ -191,7 +194,7 @@ def ver_convites_coordenador(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def desfazer_convite_coordenador(request):
-    codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET["codigo"]))
+    codigo = CodigoCadastro.objects.get(codigo=int(request.GET["codigo"]))
 
     if codigo:
         codigo.delete()
@@ -212,7 +215,7 @@ def enviar_convite_coordenador(request, codigo):
 
 @user_passes_test(lambda u: u.is_staff)
 def convidar_coordenador(request):
-    juventude = models.JuventudeEspirita.objects.get(id=int(request.POST["juventude"]))
+    juventude = JuventudeEspirita.objects.get(id=int(request.POST["juventude"]))
 
     form = forms.ConviteCoordenador(request.POST)
 
@@ -222,7 +225,7 @@ def convidar_coordenador(request):
       email = form.cleaned_data["email"]
       nome = form.cleaned_data["nome"]
 
-      codigo = models.CodigoCadastro(juventude=juventude, coordenador=True, email=email, nome=nome)
+      codigo = CodigoCadastro(juventude=juventude, coordenador=True, email=email, nome=nome)
       codigo.save()
 
       try:
@@ -244,7 +247,7 @@ def convidar_coordenador(request):
 @user_passes_test(lambda u: u.is_staff)
 def reenviar_convite_coordenador(request):
   try:
-    codigo = models.CodigoCadastro.objects.get(codigo=int(request.GET.get("codigo")))
+    codigo = CodigoCadastro.objects.get(codigo=int(request.GET.get("codigo")))
     enviar_convite_coordenador(request, codigo)
     messages.info(request, "Convite reenviado!")
   except:
@@ -256,7 +259,7 @@ def reenviar_convite_coordenador(request):
 
 @user_is_coordenador
 def desfazer_convite(request):
-    codigo = models.CodigoCadastro.objects.get(juventude=request.user.coordenador.juventude,
+    codigo = CodigoCadastro.objects.get(juventude=Coordenador.do_usuario(request.user).juventude,
                                                   codigo=int(request.GET["codigo"]))
     if codigo:
         codigo.delete()
@@ -268,19 +271,20 @@ def desfazer_convite(request):
 
 @user_is_coordenador
 def listar_confraternistas(request):
-    confraternistas = models.Confraternista.objects.filter(juventude=request.user.coordenador.juventude)
+    confraternistas = Confraternista.objects.filter(juventude=Coordenador.do_usuario(request.user).juventude,
+                                                           comebh=Comebh.comebh_vigente())
 
     return render_to_response("coordenador/listar_confraternistas.html",
                               RequestContext(request, {"confraternistas": confraternistas,
-                                                       "juventude": request.user.coordenador.juventude}))
+                                                       "juventude": Coordenador.do_usuario(request.user).juventude}))
 
 
 
 @user_is_coordenador
 def autorizar_confraternista(request):
-    confraternista = models.Confraternista.objects.get(id=request.GET.get("id"))
+    confraternista = Confraternista.objects.get(id=request.GET.get("id"))
 
-    if not confraternista or confraternista.juventude != request.user.coordenador.juventude:
+    if not confraternista or confraternista.juventude != Coordenador.do_usuario(request.user).juventude:
         return HttpResponseForbidden()
 
     confraternista.autorizado = True
@@ -303,12 +307,13 @@ def novo_usuario(request):
 
     coordenador = False
 
-    if id_codigo and id_codigo.isdigit() and models.CodigoCadastro.objects.filter(codigo=int(id_codigo)).count():
-        codigo_cadastro = models.CodigoCadastro.objects.get(codigo=int(id_codigo))
+    if id_codigo and id_codigo.isdigit() and CodigoCadastro.objects.filter(codigo=int(id_codigo)).count():
+        codigo_cadastro = CodigoCadastro.objects.get(codigo=int(id_codigo))
         form = forms.NovoUsuario(initial={'nome':   codigo_cadastro.nome,
                                           'email':  codigo_cadastro.email,
                                           'codigo': codigo_cadastro.codigo})
         coordenador = codigo_cadastro.coordenador
+        print "Novo usuário é coordenador?", coordenador
 
     elif request.method == 'POST':
         form = forms.NovoUsuario(request.POST)
@@ -317,7 +322,16 @@ def novo_usuario(request):
         return HttpResponseRedirect("/")
 
     if not id_codigo and form.is_valid():
-            usuario = User()
+
+            if User.objects.filter(email=form.cleaned_data["email"]).count() == 1:
+                usuario = User.objects.get(email=form.cleaned_data["email"])
+                ja_existia = True
+            else:
+                usuario = User()
+                ja_existia = False
+
+            print "O usuário já existia?", ja_existia
+
             usuario.username = form.cleaned_data['login']
             usuario.set_password(form.cleaned_data['senha'])
             usuario.email = form.cleaned_data['email']
@@ -327,29 +341,40 @@ def novo_usuario(request):
             usuario.first_name = nomes[0]
             usuario.last_name = " ".join(nomes[1:])
 
-            codigo = models.CodigoCadastro.objects.get(codigo=form.cleaned_data['codigo'])
+            codigo = CodigoCadastro.objects.get(codigo=form.cleaned_data['codigo'])
 
             usuario.save()
 
             if not codigo.coordenador or request.POST.get('confraternista'):
-
                 if (codigo.juventude.limite_confraternistas -
                     codigo.juventude.codigos_cadastro.count() -
-                    codigo.juventude.confraternistas.count()) < 0:
+                    codigo.juventude.confraternistas.filter(comebh=Comebh.comebh_vigente()).count()) < 0:
                     if codigo.coordenador:
                         messages.error(request, u"O limite de cadastros de confraternistas desta Juventude Espírita foi atingido. Entre em contato com a coordenação geral.")
                     else:
                         messages.error(request, u"O limite de cadastros de confraternistas desta Juventude Espírita foi atingido. Entre em contato com a coordenação de sua Juventude Espírita.")
-                    usuario.delete()
+                    if not ja_existia:
+                        usuario.delete()
                     return HttpResponseRedirect("/")
 
-                conf = models.Confraternista()
+                if ja_existia and Confraternista.objects.filter(usuario=usuario).count():
+                    conf = Confraternista.objects.filter(usuario=usuario).order_by("-comebh__data_evento")[0]
+                    conf.pagamento_inscricao = None
+                    conf.autorizado = False
+                    conf.tamanho_camisa = None
+                    conf.pk = None
+                    print "O confraternista já existia."
+                else:
+                    conf = Confraternista()
+
+                conf.comebh = Comebh.comebh_vigente()
                 conf.usuario = usuario
                 conf.juventude = codigo.juventude
                 conf.save()
 
             if codigo.coordenador:
-                coord = models.Coordenador()
+                coord = Coordenador()
+                coord.comebh = Comebh.comebh_vigente()
                 coord.usuario = usuario
                 coord.juventude = codigo.juventude
                 coord.save()
@@ -368,7 +393,7 @@ def novo_usuario(request):
 def adicionar_inscricao_pagamento(request):
   conf_id = int(request.GET.get("id"))
 
-  confraternista = models.Confraternista.objects.get(id=conf_id)
+  confraternista = Confraternista.objects.get(id=conf_id)
 
   request.session["cart"] = request.session.get("cart") or []
   request.session["cart"].append(confraternista)
@@ -408,16 +433,16 @@ def editar_dados(request):
     mostrar_link_autorizacao = False
 
     if is_coordenador and conf_id is not None and conf_id.isdigit():
-        confraternista = models.Confraternista.objects.get(id=int(conf_id))
+        confraternista = Confraternista.objects.get(id=int(conf_id))
 
-        if confraternista.juventude != request.user.coordenador.juventude:
+        if confraternista.juventude != Coordenador.do_usuario(request.user).juventude:
           return HttpResponseForbidden()
 
         if not confraternista.autorizado:
             mostrar_link_autorizacao = True
 
     else:
-        confraternista = request.user.confraternista
+        confraternista = Confraternista.do_usuario(request.user)
 
         if confraternista.autorizado and request.method == 'POST' and not is_coordenador:
           messages.add_message(request, messages.ERROR, u"Seus dados já foram aprovados. Para alterá-los, contate a coordenação de sua Juventude Espírita.")
@@ -440,21 +465,21 @@ def editar_dados(request):
         if request.POST['r_comprar_camisa'] == '0':
             confraternista.tamanho_camisa = None
 
-        if is_coordenador and is_confraternista and request.user.confraternista == confraternista:
+        if is_coordenador and is_confraternista and Confraternista.do_usuario(request.user) == confraternista:
             confraternista.autorizado = True
 
         confraternista.save()
         messages.add_message(request, messages.INFO, "Dados de inscrição salvos com sucesso!")
 
-        if is_confraternista and not is_coordenador and request.user.confraternista == confraternista:
+        if is_confraternista and not is_coordenador and Confraternista.do_usuario(request.user) == confraternista:
 
             enviar_email(request.user.email,
                          u"Seus dados de inscrição foram salvos",
                          "mail/confraternista_aguardar_aprovacao.html",
-                         {'confraternista': request.user.confraternista})
+                         {'confraternista': Confraternista.do_usuario(request.user)})
 
-            enviar_email([c.usuario.email for c in request.user.confraternista.juventude.coordenadores.all()],
-                         u"{0} preencheu seus dados de inscrição".format(request.user.confraternista.usuario.first_name),
+            enviar_email([c.usuario.email for c in Confraternista.do_usuario(request.user).juventude.coordenadores.all()],
+                         u"{0} preencheu seus dados de inscrição".format(Confraternista.do_usuario(request.user).usuario.first_name),
                          "mail/coordenador_aprovar_confraternista.html",
                          {'nome': request.user.get_full_name(), 'url': settings.SITE_URL})
 
@@ -466,9 +491,9 @@ def editar_dados(request):
                               RequestContext(request,
                                              {"form": form,
                                               "id": conf_id,
-                                              "juventude": request.user.confraternista.juventude
+                                              "juventude": Confraternista.do_usuario(request.user).juventude
                                                            if is_confraternista
-                                                           else request.user.coordenador.juventude,
+                                                           else Coordenador.do_usuario(request.user).juventude,
                                               "nome": confraternista.usuario.get_full_name(),
                                               "mostrar_link_autorizacao": mostrar_link_autorizacao}))
 
@@ -476,9 +501,9 @@ def editar_dados(request):
 def imprimir_autorizacao_pais(request):
 
     if request.GET.get("id"):
-        confraternista = models.Confraternista.objects.get(id=int(request.GET.get("id")))
+        confraternista = Confraternista.objects.get(id=int(request.GET.get("id")))
     else:
-        confraternista = request.user.confraternista
+        confraternista = Confraternista.do_usuario(request.user)
 
     print "Confraternista: ", confraternista.usuario.get_full_name()
 
@@ -489,8 +514,9 @@ def imprimir_autorizacao_pais(request):
 
 @user_is_coordenador
 def imprimir_autorizacao_casa_espirita(request):
-    juventude = request.user.coordenador.juventude
-    confraternistas = models.Confraternista.objects.filter(juventude=juventude)
+    juventude = Coordenador.do_usuario(request.user).juventude
+    confraternistas = Confraternista.objects.filter(juventude=juventude,
+                                                           comebh=Comebh.comebh_vigente())
 
     return render_to_response("coordenador/autorizacao.html",
                               RequestContext(request, {"confraternistas": confraternistas,
@@ -499,21 +525,22 @@ def imprimir_autorizacao_casa_espirita(request):
 
 
 def confraternista_realizar_pagamento(request):
-  url = pagseguro.gerar_pagamento([request.user.confraternista], request.user)
+  url = pagseguro.gerar_pagamento([Confraternista.do_usuario(request.user)], request.user)
   return HttpResponseRedirect(url)
 
 
 
 @user_passes_test(lambda u: u.is_staff)
 def editar_comebh(request):
-    form = forms.Comebh(instance=models.Comebh.comebh_vigente())
+    form = forms.Comebh(instance=Comebh.comebh_vigente())
 
     return render_to_response("administrador/editar_comebh.html",
                               RequestContext(request, {"form": form}))
 
+
 @user_passes_test(lambda u: u.is_staff)
 def salvar_comebh(request):
-    comebh_atual = models.Comebh.comebh_vigente()
+    comebh_atual = Comebh.comebh_vigente()
     form = forms.Comebh(request.POST, instance=comebh_atual)
 
     if form.is_valid():
@@ -522,3 +549,31 @@ def salvar_comebh(request):
 
     return render_to_response("administrador/editar_comebh.html",
                               RequestContext(request, {"form": form}))
+
+
+@user_passes_test(lambda u: u.is_staff)
+def criar_comebh(request):
+    comebh_atual = Comebh.comebh_vigente()
+
+    confraternistas_sem_comebh = Confraternista.objects.filter(comebh=None)
+    coordenadores_sem_comebh = Coordenador.objects.filter(comebh=None)
+
+    for c in confraternistas_sem_comebh:
+        c.comebh = comebh_atual
+        c.save()
+
+    for c in coordenadores_sem_comebh:
+        c.comebh = comebh_atual
+        c.save()
+
+    nova_comebh = Comebh()
+    nova_comebh.data_evento = datetime.date.today()
+    nova_comebh.valor_inscricao = 0.0
+    nova_comebh.valor_camisa = 0.0
+    nova_comebh.limite_inscricoes = 0
+    nova_comebh.data_limite_inscricoes = nova_comebh.data_evento
+    nova_comebh.idade_minima = 0
+
+    nova_comebh.save()
+
+    return editar_comebh(request)

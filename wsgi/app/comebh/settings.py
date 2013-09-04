@@ -36,18 +36,16 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
     EMAIL_REMOTE_SENDER = "http://localhost:8080/email/enviar"
     EMAIL_TOKEN = "127003923520501950085302456561080789870"
     EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
-    
+
     SITE_URL = "http://localhost:8000"
 
     PAGSEGURO_EMAIL_CONTA = "gabriel.poesia@gmail.com"
     PAGSEGURO_TOKEN = "7D8E77121250467A9705056AD5ED0DEA"
-    VALOR_INSCRICAO = Decimal("1.00")
-    VALOR_CAMISA = Decimal("0.50")
 
 
 
 elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
-    DEBUG = False 
+    DEBUG = False
 
     DATABASES = {
         'default': {
@@ -66,9 +64,6 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
     EMAIL_FROM_NAME = "COMEBH Noroeste"
 
     SITE_URL = "http://inscricao-comebh.rhcloud.com"
-
-    VALOR_INSCRICAO = Decimal("30.00")
-    VALOR_CAMISA = Decimal("10.00")
 
     PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
     PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
@@ -122,7 +117,7 @@ STATIC_ROOT = "/home/gpoesia/Dropbox/workspace/COMEBH/inscricao_django/static/"
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.    
+    # Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
@@ -165,7 +160,8 @@ TEMPLATE_DIRS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
+    'inscricao.views.process_context'
 )
 
 INSTALLED_APPS = (
