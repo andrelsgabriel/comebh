@@ -13,7 +13,7 @@ from models import *
 import forms
 import pagseguro
 from email import enviar_email
-from decimals import Decimal
+from decimal import Decimal
 
 
 def process_context(request):
