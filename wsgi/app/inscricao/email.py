@@ -2,12 +2,15 @@
 from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
+import models
 import urllib
 import urllib2
 
 
 def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
-    texto = get_template(template).render(Context(contexto))
+    contextoComebh = {"comebh": models.Comebh.comebh_vigente()}
+
+    texto = get_template(template).render(Context(dict(contextoComebh.items() + contexto.items())))
 
     if type(destinatarios) not in (list, tuple):
         destinatarios = (destinatarios,)

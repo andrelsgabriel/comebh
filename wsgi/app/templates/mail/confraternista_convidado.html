@@ -1,7 +1,7 @@
 {% extends "mail/base.html" %}
 {% block conteudo %}
 <h3>Olá, {{nome}}!</h3>
-<p>Você foi adicionado como confraternista da COMEBH Noroeste 2013.
+<p>Você foi adicionado como confraternista da COMEBH Noroeste {{ comebh.ano }}.
 	Pela primeira vez, as inscrições serão feitas via Internet.</p>
 <p>Para preencher seus dados de cadastro, use <a href="{{url}}/cadastro?codigo={{codigo}}">este link</a>. 
 	Após criar seu usuário, você deverá informar seus dados correspondentes à antiga ficha de inscrição (como endereço e telefone).</p>
