@@ -13,6 +13,7 @@ from models import *
 import forms
 import pagseguro
 from email import enviar_email
+from decimals import Decimal
 
 
 def process_context(request):
@@ -568,8 +569,8 @@ def criar_comebh(request):
 
     nova_comebh = Comebh()
     nova_comebh.data_evento = datetime.date.today()
-    nova_comebh.valor_inscricao = 0.0
-    nova_comebh.valor_camisa = 0.0
+    nova_comebh.valor_inscricao = Decimal("0.0")
+    nova_comebh.valor_camisa = Decimal("0.0")
     nova_comebh.limite_inscricoes = 0
     nova_comebh.data_limite_inscricoes = nova_comebh.data_evento
     nova_comebh.idade_minima = 0
