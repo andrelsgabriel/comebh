@@ -45,7 +45,7 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
 
 
 elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
-    DEBUG = False
+    DEBUG = True
 
     DATABASES = {
         'default': {
