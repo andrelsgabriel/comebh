@@ -129,7 +129,7 @@ def novo_confraternista(request):
 
 def enviar_convite_confraternista(request, codigo):
     enviar_email(codigo.email,
-                 u"Convite para inscrição na COMEBH Noroeste {}"
+                 u"Convite para inscrição na COMEBH Noroeste {0}"
                  .format(Comebh.comebh_vigente().ano()),
                  "mail/confraternista_convidado.html",
                  {'nome' : codigo.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
@@ -210,7 +210,7 @@ def desfazer_convite_coordenador(request):
 
 def enviar_convite_coordenador(request, codigo):
   enviar_email(codigo.email,
-               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste {}"
+               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste {0}"
                .format(Comebh.comebh_vigente().ano()),
                "mail/coordenador_convidado.html",
                {'nome' : codigo.nome, 'juventude': codigo.juventude.nome,
@@ -295,7 +295,7 @@ def autorizar_confraternista(request):
     confraternista.autorizado = True
 
     enviar_email(confraternista.usuario.email,
-                 u"Seus dados de inscrição na COMEBH {} foram aprovados"
+                 u"Seus dados de inscrição na COMEBH {0} foram aprovados"
                  .format(Comebh.comebh_vigente().ano()),
                  "mail/confraternista_aprovado.html",
                  {'nome': confraternista.usuario.first_name})

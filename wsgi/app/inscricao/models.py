@@ -72,7 +72,7 @@ class Comebh(models.Model):
         return self.data_evento.year
 
     def __unicode__(self):
-        return "COMEBH {}".format(self.ano())
+        return "COMEBH {0}".format(self.ano())
 
 
 class Coordenador(models.Model):

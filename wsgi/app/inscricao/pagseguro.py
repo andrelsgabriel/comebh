@@ -28,9 +28,9 @@ def url_notificacao(codigo):
 def gerar_pagamento(confraternistas, usuario):
     comebh = models.Comebh.comebh_vigente()
 
-    INSCRICAO_COM_CAMISA = {"id": 1, "descricao": "Inscrição na COMEBH {} + Camisa".format(comebh.ano()),
+    INSCRICAO_COM_CAMISA = {"id": 1, "descricao": "Inscrição na COMEBH {0} + Camisa".format(comebh.ano()),
                             "valor": comebh.valor_inscricao + comebh.valor_camisa}
-    INSCRICAO_SEM_CAMISA = {"id": 2, "descricao": "Inscrição na COMEBH {}".format(comebh.ano()),
+    INSCRICAO_SEM_CAMISA = {"id": 2, "descricao": "Inscrição na COMEBH {0}".format(comebh.ano()),
                             "valor": comebh.valor_inscricao}
 
     PRODUTOS = (INSCRICAO_COM_CAMISA, INSCRICAO_SEM_CAMISA)
