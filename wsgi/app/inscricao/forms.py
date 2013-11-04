@@ -110,7 +110,7 @@ class InscricaoConfraternista(forms.ModelForm):
 
     class Meta:
         model = models.Confraternista
-        exclude = ("usuario", "juventude", "autorizado", "pagamento_inscricao")
+        exclude = ("usuario", "juventude", "autorizado", "pagamento_inscricao", "comebh")
 
 
 

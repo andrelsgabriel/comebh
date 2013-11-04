@@ -122,13 +122,15 @@ def novo_confraternista(request):
     return render_to_response("coordenador/listar_codigos.html",
                               RequestContext(request, {'codigos' : juventude.codigos_cadastro.all(),
                                                        'form': forms.ConviteConfraternista(),
-                                                       'convites_disponiveis': max(0, convites_disponiveis)}))
+                                                       'convites_disponiveis': max(0, convites_disponiveis),
+                                                       'ano_comebh': Comebh.comebh_vigente().ano()}))
 
 
 
 def enviar_convite_confraternista(request, codigo):
     enviar_email(codigo.email,
-                 u"Convite para inscrição na COMEBH Noroeste 2013",
+                 u"Convite para inscrição na COMEBH Noroeste {}"
+                 .format(Comebh.comebh_vigente().ano()),
                  "mail/confraternista_convidado.html",
                  {'nome' : codigo.nome, 'url': settings.SITE_URL, 'codigo': codigo.codigo})
 
@@ -189,7 +191,8 @@ def ver_convites_coordenador(request):
 
     return render_to_response("administrador/listar_codigos.html",
                               RequestContext(request, {"codigos": codigos,
-                                                       "form": form}))
+                                                       "form": form,
+                                                       "ano_comebh": Comebh.comebh_vigente().ano()}))
 
 
 
@@ -207,7 +210,8 @@ def desfazer_convite_coordenador(request):
 
 def enviar_convite_coordenador(request, codigo):
   enviar_email(codigo.email,
-               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste 2013",
+               u"Convite para coordenador de Juventude Espírita na COMEBH Noroeste {}"
+               .format(Comebh.comebh_vigente().ano()),
                "mail/coordenador_convidado.html",
                {'nome' : codigo.nome, 'juventude': codigo.juventude.nome,
                 'url': settings.SITE_URL, 'codigo': codigo.codigo})
@@ -291,7 +295,8 @@ def autorizar_confraternista(request):
     confraternista.autorizado = True
 
     enviar_email(confraternista.usuario.email,
-                 u"Seus dados de inscrição na COMEBH 2013 foram aprovados",
+                 u"Seus dados de inscrição na COMEBH {} foram aprovados"
+                 .format(Comebh.comebh_vigente().ano()),
                  "mail/confraternista_aprovado.html",
                  {'nome': confraternista.usuario.first_name})
 
@@ -426,8 +431,8 @@ def editar_dados(request):
 
     print "Conf_ID: ", conf_id
 
-    is_coordenador = hasattr(request.user, 'coordenador')
-    is_confraternista = hasattr(request.user, 'confraternista')
+    is_coordenador = Coordenador.do_usuario(request.user) is not None
+    is_confraternista = Confraternista.do_usuario(request.user) is not None
 
     conf = None
 
@@ -487,6 +492,8 @@ def editar_dados(request):
             messages.add_message(request, messages.INFO, "Verifique seu email para mais informações.")
 
         return HttpResponseRedirect("/")
+    else:
+      print "Erros na ficha de inscrição do confraternista", confraternista.usuario.first_name
 
     return render_to_response("confraternista/editar_dados.html",
                               RequestContext(request,
@@ -508,8 +515,16 @@ def imprimir_autorizacao_pais(request):
 
     print "Confraternista: ", confraternista.usuario.get_full_name()
 
+    comebh = Comebh.comebh_vigente()
+
     return render_to_response("confraternista/autorizacao.html",
-                              RequestContext(request, {"confraternista": confraternista}))
+                              RequestContext(request, 
+                                {"confraternista": confraternista,
+                                 "ano_comebh": comebh.ano(),
+                                 "data_inicio_comebh": comebh.data_evento.strftime("%d/%m/%Y"),
+                                 "data_fim_comebh": (comebh.data_evento + 
+                                                    datetime.timedelta(days=4))
+                                                    .strftime("%d/%m/%Y")}))
 
 
 
@@ -519,9 +534,17 @@ def imprimir_autorizacao_casa_espirita(request):
     confraternistas = Confraternista.objects.filter(juventude=juventude,
                                                            comebh=Comebh.comebh_vigente())
 
+    comebh = Comebh.comebh_vigente()
+
     return render_to_response("coordenador/autorizacao.html",
-                              RequestContext(request, {"confraternistas": confraternistas,
-                                                       "juventude": juventude}))
+                              RequestContext(request, 
+                                {"confraternistas": confraternistas,
+                                 "juventude": juventude,
+                                 "ano_comebh": comebh.ano(),
+                                 "data_inicio_comebh": comebh.data_evento.strftime("%d/%m/%Y"),
+                                 "data_fim_comebh": (comebh.data_evento + 
+                                                     datetime.timedelta(days=4))
+                                                     .strftime("%d/%m/%Y")}))
 
 
 
