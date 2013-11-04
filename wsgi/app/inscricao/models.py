@@ -31,8 +31,12 @@ class JuventudeEspirita(models.Model):
     def isCoordenador(self, usuario):
         return usuario.coordenador and usuario.coordenador.juventude == self
 
-    inscricoes_disponiveis = property(lambda self: self.limite_confraternistas - self.confraternistas.count())
-    inscricoes_utilizadas = property(lambda self: self.confraternistas.count())
+    inscricoes_disponiveis = property(lambda self: 
+        self.limite_confraternistas - 
+        self.confraternistas.filter(comebh = Comebh.comebh_vigente()).count())
+
+    inscricoes_utilizadas = property(lambda self: 
+        self.confraternistas.filter(comebh = Comebh.comebh_vigente()).count())
 
     class Meta:
         verbose_name = "Juventude Espírita"
