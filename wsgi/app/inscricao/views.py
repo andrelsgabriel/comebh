@@ -600,4 +600,8 @@ def criar_comebh(request):
 
     nova_comebh.save()
 
+    for j in JuventudeEspirita.objects.all():
+      j.limite_confraternistas = 0
+      j.save()
+
     return editar_comebh(request)

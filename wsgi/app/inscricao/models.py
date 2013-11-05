@@ -21,7 +21,7 @@ class JuventudeEspirita(models.Model):
     limite_confraternistas = models.PositiveIntegerField('limite de confraternistas (fichas)')
 
     def clean(self):
-        if self.limite_confraternistas < self.confraternistas.count():
+        if self.limite_confraternistas < self.inscricoes_utilizadas:
             raise ValidationError(u"O limite de confraternistas da Juventude Espírita deve ser maior que o número de confraternistas cadastrados.")
 
     def __unicode__(self):
