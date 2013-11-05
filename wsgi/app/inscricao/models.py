@@ -78,7 +78,7 @@ class Comebh(models.Model):
     def __unicode__(self):
         return "COMEBH {0}".format(self.ano())
 
-    class Admin:
+    class Admin(admin.ModelAdmin):
         pass
 
 
