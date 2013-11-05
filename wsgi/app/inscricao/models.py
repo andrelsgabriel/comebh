@@ -78,6 +78,9 @@ class Comebh(models.Model):
     def __unicode__(self):
         return "COMEBH {0}".format(self.ano())
 
+    class Admin:
+        pass
+
 
 class Coordenador(models.Model):
     usuario = models.ForeignKey(User, related_name="coordenadores")
