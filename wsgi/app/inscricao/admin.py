@@ -4,11 +4,12 @@ from django.conf import settings
 from models import *
 
 
-    		
+
 for m in [JuventudeEspirita,
           Coordenador,
           Confraternista,
-          Pagamento]:
+          Pagamento,
+          Comebh]:
     if hasattr(m, 'Admin'):
         admin.site.register(m, m.Admin)
     else:
