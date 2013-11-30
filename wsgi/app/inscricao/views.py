@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response
 from django.contrib import messages
 from django.conf import settings
 from models import *
+import sys
 import forms
 import pagseguro
 from email import enviar_email
@@ -319,7 +320,7 @@ def novo_usuario(request):
                                           'email':  codigo_cadastro.email,
                                           'codigo': codigo_cadastro.codigo})
         coordenador = codigo_cadastro.coordenador
-        print "Novo usuário é coordenador?", coordenador
+        sys.stderr.write("Novo usuário é coordenador?" + str(coordenador) + "\n")
 
     elif request.method == 'POST':
         form = forms.NovoUsuario(request.POST)
@@ -336,7 +337,7 @@ def novo_usuario(request):
                 usuario = User()
                 ja_existia = False
 
-            print "O usuário já existia?", ja_existia
+            sys.stderr.write("O usuário já existia?" + str(ja_existia) + "\n")
 
             usuario.username = form.cleaned_data['login']
             usuario.set_password(form.cleaned_data['senha'])
@@ -369,7 +370,7 @@ def novo_usuario(request):
                     conf.autorizado = False
                     conf.tamanho_camisa = None
                     conf.pk = None
-                    print "O confraternista já existia."
+                    sys.stderr.write("O confraternista já existia.\n")
                 else:
                     conf = Confraternista()
 
@@ -518,11 +519,11 @@ def imprimir_autorizacao_pais(request):
     comebh = Comebh.comebh_vigente()
 
     return render_to_response("confraternista/autorizacao.html",
-                              RequestContext(request, 
+                              RequestContext(request,
                                 {"confraternista": confraternista,
                                  "ano_comebh": comebh.ano(),
                                  "data_inicio_comebh": comebh.data_evento.strftime("%d/%m/%Y"),
-                                 "data_fim_comebh": (comebh.data_evento + 
+                                 "data_fim_comebh": (comebh.data_evento +
                                                     datetime.timedelta(days=4))
                                                     .strftime("%d/%m/%Y")}))
 
@@ -537,12 +538,12 @@ def imprimir_autorizacao_casa_espirita(request):
     comebh = Comebh.comebh_vigente()
 
     return render_to_response("coordenador/autorizacao.html",
-                              RequestContext(request, 
+                              RequestContext(request,
                                 {"confraternistas": confraternistas,
                                  "juventude": juventude,
                                  "ano_comebh": comebh.ano(),
                                  "data_inicio_comebh": comebh.data_evento.strftime("%d/%m/%Y"),
-                                 "data_fim_comebh": (comebh.data_evento + 
+                                 "data_fim_comebh": (comebh.data_evento +
                                                      datetime.timedelta(days=4))
                                                      .strftime("%d/%m/%Y")}))
 
