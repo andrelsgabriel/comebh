@@ -330,8 +330,10 @@ def novo_usuario(request):
 
     if not id_codigo and form.is_valid():
 
-            if User.objects.filter(email=form.cleaned_data["email"]).count() == 1:
-                usuario = User.objects.get(email=form.cleaned_data["email"])
+            email = str(form.cleaned_data["email"])
+
+            if User.objects.filter(email=email).count() == 1:
+                usuario = User.objects.get(email=email)
                 ja_existia = True
             else:
                 usuario = User()
