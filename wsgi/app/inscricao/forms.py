@@ -46,7 +46,8 @@ class NovoUsuario(forms.Form):
     def clean(self):
         if 'login' in self.cleaned_data and \
             User.objects.filter(username=self.cleaned_data['login']).count() != 0:
-            self.errors['login'] = (self.errors.get('login') or []) + [u"Este login já está sendo usado."]
+            if User.objects.get(username=self.cleaned_data["login"]).email  != self.cleaned_data["email"]:
+                self.errors['login'] = (self.errors.get('login') or []) + [u"Este login já está sendo usado."]
 
         if 'codigo' in self.cleaned_data and \
             models.CodigoCadastro.objects.filter(codigo=self.cleaned_data['codigo']).count() == 0:
