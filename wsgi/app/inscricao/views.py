@@ -393,8 +393,8 @@ def novo_usuario(request):
             messages.add_message(request, messages.INFO, u"Seu cadastro foi realizado! Você pode fazer login agora.")
             return HttpResponseRedirect("/")
 
-    return render_to_response("cadastro.html",
-            RequestContext(request, {"form": form, "coordenador": coordenador}))
+    return render_to_response("cadastro.html", {"form": form, "coordenador": coordenador},
+            context_instance=RequestContext(request))
 
 
 
