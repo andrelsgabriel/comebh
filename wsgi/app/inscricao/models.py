@@ -27,15 +27,15 @@ class JuventudeEspirita(models.Model):
     def __unicode__(self):
         return self.nome
 
-
     def isCoordenador(self, usuario):
-        return usuario.coordenador and usuario.coordenador.juventude == self
+        c = Coordenador.do_usuario(usuario)
+        return c is not None and c.juventude == self
 
-    inscricoes_disponiveis = property(lambda self: 
-        self.limite_confraternistas - 
+    inscricoes_disponiveis = property(lambda self:
+        self.limite_confraternistas -
         self.confraternistas.filter(comebh = Comebh.comebh_vigente()).count())
 
-    inscricoes_utilizadas = property(lambda self: 
+    inscricoes_utilizadas = property(lambda self:
         self.confraternistas.filter(comebh = Comebh.comebh_vigente()).count())
 
     class Meta:
