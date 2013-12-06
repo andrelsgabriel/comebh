@@ -478,7 +478,7 @@ def editar_dados(request):
             confraternista.autorizado = True
 
         confraternista.save()
-        messages.add_message(request, messages.INFO, "Dados de inscrição salvos com sucesso!")
+        messages.add_message(request, messages.INFO, u"Dados de inscrição salvos com sucesso!")
 
         if is_confraternista and not is_coordenador and Confraternista.do_usuario(request.user) == confraternista:
 
@@ -492,11 +492,9 @@ def editar_dados(request):
                          "mail/coordenador_aprovar_confraternista.html",
                          {'nome': request.user.get_full_name(), 'url': settings.SITE_URL})
 
-            messages.add_message(request, messages.INFO, "Verifique seu email para mais informações.")
+            messages.add_message(request, messages.INFO, u"Verifique seu email para mais informações.")
 
         return HttpResponseRedirect("/")
-    else:
-      print "Erros na ficha de inscrição do confraternista", confraternista.usuario.first_name
 
     return render_to_response("confraternista/editar_dados.html",
                               RequestContext(request,
@@ -515,8 +513,6 @@ def imprimir_autorizacao_pais(request):
         confraternista = Confraternista.objects.get(id=int(request.GET.get("id")))
     else:
         confraternista = Confraternista.do_usuario(request.user)
-
-    print "Confraternista: ", confraternista.usuario.get_full_name()
 
     comebh = Comebh.comebh_vigente()
 
