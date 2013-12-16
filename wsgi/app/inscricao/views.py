@@ -517,13 +517,13 @@ def imprimir_autorizacao_pais(request):
     comebh = Comebh.comebh_vigente()
 
     return render_to_response("confraternista/autorizacao.html",
-                              RequestContext(request,
                                 {"confraternista": confraternista,
                                  "ano_comebh": comebh.ano(),
                                  "data_inicio_comebh": comebh.data_evento.strftime("%d/%m/%Y"),
                                  "data_fim_comebh": (comebh.data_evento +
                                                     datetime.timedelta(days=4))
-                                                    .strftime("%d/%m/%Y")}))
+                                                    .strftime("%d/%m/%Y")},
+                                RequestContext(request))
 
 
 
