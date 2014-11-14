@@ -1,6 +1,6 @@
 #lateral {
     float: left;
-    width: 25%;
+    width: 23%;
     border-right: 2px solid rgb(50, 50, 220);
     border-bottom: 2px solid rgb(50, 50, 220);
 }
@@ -15,8 +15,8 @@
 
 #conteudo {
     float: right;
-    width: 68%;
-    margin-left: 80px;
+    width: 66%;
+    margin-left: 40px;
 }
 
 .errors, .errorlist {

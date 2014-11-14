@@ -19,8 +19,8 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'inscricao',
-            'USER': 'comebh',
-            'PASSWORD': 'comebh',
+            'USER': 'root',
+            'PASSWORD': 'Jython',
             'HOST': '',
             'PORT': '',
         }
@@ -45,7 +45,7 @@ if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
 
 
 elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
-    DEBUG = True
+    DEBUG = False
 
     DATABASES = {
         'default': {

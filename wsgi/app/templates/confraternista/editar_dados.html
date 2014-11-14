@@ -45,10 +45,60 @@
         
         $('input[name*=telefone]').mask("(99) 9999-9999");
     });
+
+    var ULTIMO_SLIDE = 21;
+    var slide_atual = null;
+
+    function editar_dados() {
+        $("#inicio").hide();
+        $("#lateral").attr("style", "display: inline");
+        $("#conteudo").attr("style", "");
+        $("#apresentacao").hide();
+        $("#formulario_editar_dados").show(); 
+    }
+
+    function apresentacao() {
+        slide_atual = 0;
+        $("#lateral").attr("style", "display: none");
+        $("#inicio").hide();
+        $("#conteudo").attr("style", "margin-left: 5%; width: 100%");
+        $("#apresentacao").show();
+        apresentacaoProximo();
+    }
+
+    function apresentacaoProximo() {
+        if (slide_atual == ULTIMO_SLIDE) {
+            editar_dados();
+        } else {
+            slide_atual += 1;
+            $("#iframe_apresentacao").attr("src",
+                    "/static/apresentacao/HTML_Regimento/"+slide_atual+".html");
+            $("html,body").scrollTop(0);
+        }
+    }
+
+    function redimensionarIframe(obj) {
+        obj.style.height = (obj.contentWindow.document.body.scrollHeight + 40) + 'px';
+    }
 </script>
 
-<h1>Editar dados de inscrição</h1>
+<div id="inicio">
+<h1>Inscrição do confraternista</h1>
+<p>Se você deseja preencher os dados da sua inscrição na COMEBH, clique em "Iniciar inscrição".</p>
+<p>Caso contrário, clique em "Visualizar inscrição"</p>
 
+<input type="button" value="Iniciar inscrição" onclick="apresentacao();"/>
+<input type="button" value="Visualizar inscrição" onclick="editar_dados();"/>
+</div>
+
+<div id="apresentacao" style="display: none">
+<iframe id="iframe_apresentacao" style="width: 90%;" onload="redimensionarIframe(this);"></iframe>
+<br/>
+<input type="button" value="Próximo" onclick="apresentacaoProximo();"/>
+</div>
+
+<div id="formulario_editar_dados" style="display: none">
+<h1>Editar dados de inscrição</h1>
 <form method="POST" action="/confraternista/editar_dados" onsubmit="return validarAceitacaoRegulamento();">
     {% csrf_token %}
 
@@ -226,8 +276,8 @@
           <td colspan="2">
         <p id="t_aceitar_regulamento">
           <input type="checkbox" id="aceitar_regulamento"/>
-          Declaro estar consciente do <a target="_blank" href="http://dajnoroeste.juventudeespirita.com.br/index.php/comebh/regulamento.html">regulamento da XXXI COMEBH</a> e me comprometo a estar presente na 
-          prévia da COMEBH cuja data, horário e local serão divulgados para os coordenadores das mocidades.
+          Declaro estar consciente do <a target="_blank" href="/static/regulamento.pdf">regulamento da COMEBH</a> e me comprometo a estar presente na 
+          prévia da COMEBH cuja data, horário e local serão divulgados para os coordenadores das Juventudes Espíritas.
         </p>
           </td>
         </tr>
@@ -256,5 +306,6 @@
 
       <input type="submit" value="Salvar"/>
 </form>
+</div>
 
 {% endblock %}
