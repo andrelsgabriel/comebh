@@ -1,0 +1,56 @@
+#lateral {
+    float: left;
+    width: 20%;
+    border-right: 2px solid rgb(50, 50, 220);
+    border-bottom: 2px solid rgb(50, 50, 220);
+}
+
+#menu {
+    border-bottom: 1px solid rgb(50, 50, 220);
+}
+
+#carrinho {
+    display: none;
+}
+
+#conteudo {
+    float: right;
+    width: 73%;
+    margin-left: 80px;
+}
+
+.errors, .errorlist {
+    border: 1px solid blue;
+    color: red;
+    padding: 5px 5px 5px 5px;
+    display: none;
+    list-style-type: none;
+}
+
+.messages, .messagelist {
+    border: 1px solid blue;
+    color: blue;
+    padding: 5px 5px 5px 5px;
+    display: none;
+    list-style-type: none;
+}
+
+.tabela {
+    border-collapse: collapse;
+}
+
+.tabela thead {
+    border: 2px solid blue;
+}
+
+.tabela tr td, .tabela thead th {
+    border: 1px solid blue;
+}
+
+h2 {
+    color: #232377;
+}
+
+h1 {
+    color: #232377;
+}
