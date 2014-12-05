@@ -9,7 +9,6 @@ ADMINS = (
     ('Gabriel Poesia', 'gabriel.poesia@gmail.com'),
 )
 
-
 MANAGERS = ADMINS
 
 if os.environ.get('APPLICATION_ENVIRONMENT') in (None, 'development'):
@@ -58,15 +57,23 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
         }
     }
 
-    EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
-    EMAIL_TOKEN = "127003923520501950085302456561080789870"
-    DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
-    EMAIL_FROM_NAME = "COMEBH Noroeste"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "mail.gmx.com"
+EMAIL_PORT = 587
 
-    SITE_URL = "http://inscricao-comebh.rhcloud.com"
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = "comebh@gmx.com"
+EMAIL_HOST_USER = "comebh@gmx.com"
+EMAIL_HOST_PASSWORD = "noroeste"
 
-    PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
-    PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
+# EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
+# EMAIL_TOKEN = "127003923520501950085302456561080789870"
+# DEFAULT_FROM_EMAIL = "comebh@dajnoroeste.juventudeespirita.com.br"
+EMAIL_FROM_NAME = "COMEBH Noroeste"
+
+SITE_URL = "http://inscricao-comebh.rhcloud.com"
+
+#  PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
+#  PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
 
 
 TEMPLATE_DEBUG = DEBUG

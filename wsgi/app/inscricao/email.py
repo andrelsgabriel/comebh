@@ -2,12 +2,14 @@
 from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
+from django.core.mail import EmailMessage
 import models
 import urllib
 import urllib2
+import traceback
 
 
-def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
+def enviar_email_juventudeespirita(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
     contextoComebh = {"comebh": models.Comebh.comebh_vigente()}
 
     texto = get_template(template).render(Context(dict(contextoComebh.items() + contexto.items())))
@@ -33,3 +35,25 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
 
     print "Log: ", log
     return True
+
+def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
+    contextoComebh = {"comebh": models.Comebh.comebh_vigente()}
+
+    texto = get_template(template).render(Context(dict(contextoComebh.items() + contexto.items())))
+
+    if type(destinatarios) not in (list, tuple):
+        destinatarios = (destinatarios,)
+
+    print u"Enviando email {0} para {1}".format(template, u",".join(destinatarios))
+
+    try:
+        m = EmailMessage(assunto.encode("utf-8"),
+                         texto.encode("utf-8"),
+                         settings.DEFAULT_FROM_EMAIL,
+                         destinatarios,
+                         bcc=cc+bcc)
+        m.content_subtype = "html"
+        return m.send()
+    except Exception as e:
+        traceback.print_exc(e)
+        raise
