@@ -57,6 +57,9 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
         }
     }
 
+    PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
+    PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = "mail.gmx.com"
 EMAIL_PORT = 587
@@ -71,10 +74,6 @@ EMAIL_HOST_PASSWORD = "noroeste"
 EMAIL_FROM_NAME = "COMEBH Noroeste"
 
 SITE_URL = "http://inscricao-comebh.rhcloud.com"
-
-#  PAGSEGURO_TOKEN = "6C0D8CC7A6554E009BE36C52C5F162EC"
-#  PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
-
 
 TEMPLATE_DEBUG = DEBUG
 
