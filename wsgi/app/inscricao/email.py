@@ -3,6 +3,7 @@ from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.core import mail
 import models
 import urllib
 import urllib2
@@ -47,14 +48,19 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
 
     print u"Enviando email {0} para {1}".format(template, u",".join(destinatarios))
 
+    from_address = random.choice(settings.ALTERNATE_EMAILS)
+
     try:
-        m = EmailMessage(assunto.encode("utf-8"),
-                         texto.encode("utf-8"),
-                         random.choice(settings.ALTERNATE_EMAILS),
-                         destinatarios,
-                         bcc=cc+bcc)
-        m.content_subtype = "html"
-        return m.send()
+        with mail.get_connection(username=from_address) as connection:
+            m = EmailMessage(assunto.encode("utf-8"),
+                             texto.encode("utf-8"),
+                             from_address,
+                             destinatarios,
+                             bcc=cc+bcc,
+                             connection=connection)
+            m.content_subtype = "html"
+            return m.send()
+
     except Exception as e:
         traceback.print_exc(e)
         raise
