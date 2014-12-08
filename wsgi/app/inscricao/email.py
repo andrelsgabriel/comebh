@@ -51,16 +51,17 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
     from_address = random.choice(settings.ALTERNATE_EMAILS)
 
     try:
-        with mail.get_connection(username=from_address) as connection:
-            m = EmailMessage(assunto.encode("utf-8"),
-                             texto.encode("utf-8"),
-                             from_address,
-                             destinatarios,
-                             bcc=cc+bcc,
-                             connection=connection)
-            m.content_subtype = "html"
-            return m.send()
-
+        connection = mail.get_connection(username=from_address)
+        m = EmailMessage(assunto.encode("utf-8"),
+                         texto.encode("utf-8"),
+                         from_address,
+                         destinatarios,
+                         bcc=cc+bcc,
+                         connection=connection)
+        m.content_subtype = "html"
+        result = m.send()
+        connection.close()
+        return result
     except Exception as e:
         traceback.print_exc(e)
         raise
