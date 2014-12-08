@@ -60,7 +60,6 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
                          connection=connection)
         m.content_subtype = "html"
         result = connection.send_messages([m])
-        connection.close()
         return result
     except Exception as e:
         traceback.print_exc(e)
