@@ -64,6 +64,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "mail.gmx.com"
 EMAIL_PORT = 587
 
+ALTERNATE_EMAILS = ["comebh@gmx.com",
+                    "comebh1@gmx.com",
+                    "comebh2@gmx.com"]
+
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = "comebh@gmx.com"
 EMAIL_HOST_USER = "comebh@gmx.com"
 EMAIL_HOST_PASSWORD = "noroeste"

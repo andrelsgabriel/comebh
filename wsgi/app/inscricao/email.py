@@ -7,6 +7,7 @@ import models
 import urllib
 import urllib2
 import traceback
+import random
 
 
 def enviar_email_juventudeespirita(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
@@ -49,7 +50,7 @@ def enviar_email(destinatarios, assunto, template, contexto={}, cc=[], bcc=[]):
     try:
         m = EmailMessage(assunto.encode("utf-8"),
                          texto.encode("utf-8"),
-                         settings.DEFAULT_FROM_EMAIL,
+                         random.choice(settings.ALTERNATE_EMAILS),
                          destinatarios,
                          bcc=cc+bcc)
         m.content_subtype = "html"
