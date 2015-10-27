@@ -44,7 +44,7 @@
 					<li><a target="_blank" onclick="return avisoPagamentoConfraternista();" href="/confraternista/realizar_pagamento">Pagar minha inscrição</a></li>
 				{% endif %}
 
-				{% if confraternista.precisa_autorizacao_pais and not confraternista.autorizado %}
+				{% if confraternista.precisa_autorizacao_pais %}
 					<li><a href="/confraternista/imprimir_autorizacao_pais">Ficha de autorização dos pais</a></li>
 				{% endif %}
 			</ul>

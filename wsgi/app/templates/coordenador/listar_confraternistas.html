@@ -24,7 +24,7 @@
       	  	{% if c.autorizado and not c.pagamento_inscricao.pago %}
       	  		<a href="/coordenador/pagarInscricao?id={{c.id}}">Pagar inscrição</a>,&nbsp;
       	  	{% endif %}
-      	  	{% if not c.autorizado and c.precisa_autorizacao_pais %}
+      	  	{% if c.precisa_autorizacao_pais %}
 		   		<a href="/confraternista/imprimir_autorizacao_pais?id={{c.id}}" target="_blank">Imprimir autorização dos pais</a>,&nbsp;
       	  	{% endif %}
       		<a href="/confraternista/editar_dados?id={{c.id}}">Ver dados</a>	   
