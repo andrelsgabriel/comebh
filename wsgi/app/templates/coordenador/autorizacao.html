@@ -37,12 +37,18 @@
       <thead>
         <th>Nome</th>
         <th>Identidade (RG)</th>
+        <th>Data de Nascimento</th>
       </thead>
       <tbody>
         {% for c in confraternistas %}
         <tr>
           <td>{{ c.usuario.get_full_name }}</td>
           <td>{{ c.identidade }}</td>
+          {% if c.precisa_autorizacao_pais %}
+          <td>Menor de 18 anos</td>
+          {% else %}
+          <td></td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>
