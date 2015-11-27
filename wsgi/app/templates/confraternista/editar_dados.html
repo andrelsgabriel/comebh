@@ -43,7 +43,7 @@
         
         $('input[name*=telefone]').mask("(99) 9999-9999");
 
-        if ({{ form.errors }}) {
+        if ({{ form.errors | length }}) {
           editar_dados();
           alert("Sua ficha não foi salva por erro no preenchimento de alguns campos. Por favor, verifique seus dados e as mensagens mostradas.");
         }
