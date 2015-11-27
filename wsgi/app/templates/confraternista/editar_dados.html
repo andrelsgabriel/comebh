@@ -11,7 +11,6 @@
     }
 
     function validarAceitacaoRegulamento(){
-
         if($('input[name="r_comprar_camisa"][value="1"]').is(":checked")){
           if(!$('#id_tamanho_camisa').val()){
             alert("Você escolheu comprar a camisa, mas não especificou um tamanho. Por favor, escolha um tamanho para sua");
@@ -21,7 +20,6 @@
         else {
           $('#id_tamanho_camisa').val("");
         }
-
 
         if(!$("#aceitar_regulamento").is(":checked")){
             alert("É necessário aceitar o regulamento para enviar seus dados de inscrição.");
@@ -44,6 +42,11 @@
         $('input[name="r_comprar_camisa"][value={{ form.tamanho_camisa.value|yesno:"1,0" }}]').click().click();
         
         $('input[name*=telefone]').mask("(99) 9999-9999");
+
+        if ({{ form.errors }}) {
+          editar_dados();
+          alert("Sua ficha não foi salva por erro no preenchimento de alguns campos. Por favor, verifique seus dados e as mensagens mostradas.");
+        }
     });
 
     var ULTIMO_SLIDE = 21;
