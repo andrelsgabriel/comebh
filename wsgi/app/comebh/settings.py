@@ -61,16 +61,16 @@ elif os.environ.get('APPLICATION_ENVIRONMENT') == 'production':
     PAGSEGURO_EMAIL_CONTA = "daj_noroeste@juventudeespirita.com.br"
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.mail.yahoo.com" # "mail.gmx.com"
-EMAIL_PORT = 465 # 587
+EMAIL_HOST = "mail.gmx.com"
+EMAIL_PORT = 587
 
-ALTERNATE_EMAILS = ["comebh1@yahoo.com"] #["comebh@gmx.com",
-                   # "comebh1@gmx.com",
-                   # "comebh2@gmx.com"]
+ALTERNATE_EMAILS = ["comebh@gmx.com",
+                    "comebh1@gmx.com",
+                    "comebh2@gmx.com"]
 
-DEFAULT_FROM_EMAIL = SERVER_EMAIL = "comebh1@yahoo.com" # "comebh@gmx.com"
-EMAIL_HOST_USER = "comebh1@yahoo.com" # "comebh@gmx.com"
-EMAIL_HOST_PASSWORD = "Noroeste1" # "noroeste"
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = "comebh@gmx.com"
+EMAIL_HOST_USER = "comebh@gmx.com"
+EMAIL_HOST_PASSWORD = "noroeste"
 
 # EMAIL_REMOTE_SENDER = "http://mailer.juventudeespirita.com.br/email/enviar"
 # EMAIL_TOKEN = "127003923520501950085302456561080789870"
